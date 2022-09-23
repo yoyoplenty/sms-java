@@ -1,4 +1,4 @@
-package com.example.SchoolManagementSystem.Users;
+package com.example.SchoolManagementSystem.Schools;
 
 import com.example.SchoolManagementSystem.Responses.ResponseHandler;
 import jakarta.validation.Valid;
@@ -9,57 +9,58 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
-@RequestMapping("api/v1/user")
-public class UserController {
+@RequestMapping("api/v1/school")
+public class SchoolController {
     @Autowired
-    UserService userService;
+    SchoolService schoolService;
 
     @PostMapping()
-    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<Object> createSchool(@Valid @RequestBody School school) {
         try {
-            User newUser = userService.createUser(user);
-            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
+            School newSchool = schoolService.createSchool(school);
+            return ResponseHandler.generateResponse("Successfully created school!", HttpStatus.OK, newSchool);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getUsers() {
+    public ResponseEntity<Object> getSchools() {
         try {
-            List<User> allUsers = userService.getAllUsers();
+            List<School> allSchools = schoolService.getAllSchools();
 //            System.out.println(allUsers);
-            return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, allUsers);
+            return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, allSchools);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> GetOneUser(@PathVariable int id) {
+    public ResponseEntity<Object> getOneSchool(@PathVariable int id) {
         try {
-            User userGotten = userService.GetUser(id);
-            return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, userGotten);
+            School schoolGotten = schoolService.getSchool(id);
+            return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, schoolGotten);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> UpdateUser(@PathVariable int id, @RequestBody User user) {
+    public ResponseEntity<Object> updateSchool(@PathVariable int id, @RequestBody School school) {
         try {
-            User updatedUser = userService.UpdateUser(user, id);
-            return ResponseHandler.generateResponse("Updated", HttpStatus.OK, updatedUser);
+            School updatedSchool = schoolService.updateSchool(school, id);
+            return ResponseHandler.generateResponse("Updated", HttpStatus.OK, updatedSchool);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> Delete(@PathVariable int id) {
+    public ResponseEntity<Object> deleteSchool(@PathVariable int id) {
         try {
-            String result = userService.DeleteUser(id);
+            String result = schoolService.deleteSchool(id);
             return ResponseHandler.generateResponse("Deleted!", HttpStatus.OK, result);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);

@@ -33,17 +33,19 @@ public class UserService {
 
     public User UpdateUser(User user, int id) {
 
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) throw new RuntimeException("user not found");
+        User userOptional = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
 
-        userOptional.get().setFirstName(user.getFirstName());
-        userOptional.get().setLastName(user.getLastName());
-        userOptional.get().setPhoneNumber(user.getPhoneNumber());
-        userOptional.get().setEmail(user.getEmail());
+        userOptional.setFirstName(user.getFirstName());
+        userOptional.setLastName(user.getLastName());
+        userOptional.setPhoneNumber(user.getPhoneNumber());
+        userOptional.setEmail(user.getEmail());
 
-        return userRepository.save(user);
+        return userRepository.save(userOptional);
     }
-//
-//    public String DeleteUser(int id) {
-//    }
+
+    public String DeleteUser(int id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
+        userRepository.delete(user);
+        return "deleted successfully";
+    }
 }
