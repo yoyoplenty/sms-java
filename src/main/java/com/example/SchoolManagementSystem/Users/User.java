@@ -1,6 +1,7 @@
 package com.example.SchoolManagementSystem.Users;
 
 import com.example.SchoolManagementSystem.Roles.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,6 +36,7 @@ public class User {
     private String phoneNumber;
 
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "isActive")
@@ -45,14 +47,10 @@ public class User {
 
     @Column(name = "accessToken")
     private String accessToken;
-
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "role_id")
-//    private Role role;
-
+    
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "users_roles",
+            name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )

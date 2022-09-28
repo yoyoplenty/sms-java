@@ -16,4 +16,7 @@ public class Role {
     @Column(name = "name")
     @NotBlank(message = "name cannot be empty")
     private String name;
+    
+    @Column
+    private String description;
 }
