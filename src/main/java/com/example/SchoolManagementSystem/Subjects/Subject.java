@@ -1,10 +1,10 @@
 package com.example.SchoolManagementSystem.Subjects;
 
 import com.example.SchoolManagementSystem.Teachers.Teacher;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Data
@@ -24,7 +24,7 @@ public class Subject {
     private String code;
 
     private String grade;
-    
+
     @ManyToMany(mappedBy = "subjects")
     private Collection<Teacher> teachers;
 }

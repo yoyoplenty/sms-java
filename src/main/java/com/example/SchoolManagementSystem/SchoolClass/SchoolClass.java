@@ -1,8 +1,9 @@
 package com.example.SchoolManagementSystem.SchoolClass;
 
 import com.example.SchoolManagementSystem.Schools.School;
-import jakarta.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Data
 @Entity

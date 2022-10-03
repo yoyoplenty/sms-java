@@ -2,12 +2,13 @@ package com.example.SchoolManagementSystem.Schools;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 
-@Controller
+@Service
 public class SchoolService {
 
     @Autowired
@@ -23,6 +24,7 @@ public class SchoolService {
     }
 
     public List<School> getAllSchools() {
+        System.out.println("i am okay");
         return schoolRepository.findAll();
     }
 

@@ -1,12 +1,12 @@
 package com.example.SchoolManagementSystem.Users;
 
 import com.example.SchoolManagementSystem.Responses.ResponseHandler;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -55,7 +55,7 @@ public class UserController {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> Delete(@PathVariable int id) {
         try {

@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class UserService {
+public class UserService /* implements UserDetailsService */ {
 
     @Autowired
     UserRepository userRepository;
+
+    private final static String USER_NOT_FOUND = "user with the email %s not found";
 
 //    public UserService(UserRepository userRepository) { this.userRepository = userRepository; }
 
@@ -48,4 +50,10 @@ public class UserService {
         userRepository.delete(user);
         return "deleted successfully";
     }
+/*
+    @Override
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findUserByEmail(email).orElseThrow( ()->
+                new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
+    } */
 }

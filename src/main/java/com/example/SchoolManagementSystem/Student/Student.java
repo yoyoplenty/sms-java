@@ -1,9 +1,10 @@
 package com.example.SchoolManagementSystem.Student;
 
 import com.example.SchoolManagementSystem.Schools.School;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
