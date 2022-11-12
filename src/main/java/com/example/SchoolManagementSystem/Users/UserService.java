@@ -1,25 +1,41 @@
 package com.example.SchoolManagementSystem.Users;
 
+import com.example.SchoolManagementSystem.Auth.Security.Service.UserDetailsImpl;
+import com.example.SchoolManagementSystem.Roles.RoleService;
+import com.example.SchoolManagementSystem.Roles.Roles;
+import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
-public class UserService /* implements UserDetailsService */ {
-
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleService roleService;
 
     private final static String USER_NOT_FOUND = "user with the email %s not found";
 
-//    public UserService(UserRepository userRepository) { this.userRepository = userRepository; }
-
-    public User createUser(User user) {
-        Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
+    public User createUser(NewUserDto newUserDto) {
+        Optional<User> userOptional = userRepository.findUserByEmail(newUserDto.getEmail());
         if (userOptional.isPresent()) throw new IllegalStateException("User already exists");
 
+        User user = new User(newUserDto.getFirstName(), newUserDto.getLastName(), newUserDto.getEmail(), newUserDto.getPhoneNumber(), newUserDto.getPassword());
+
+        List<UUID> roleIds = newUserDto.getRoleId();
+        Set<Roles> roles = new HashSet<>();
+
+        roleIds.forEach(roleId -> {
+            Roles userRole = roleService.findRoleByTd(roleId);
+            roles.add(userRole);
+        });
+
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 
@@ -27,13 +43,13 @@ public class UserService /* implements UserDetailsService */ {
         return userRepository.findAll();
     }
 
-    public User GetUser(int id) {
+    public User GetUser(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) return userOptional.get();
         throw new IllegalStateException("user not found");
     }
 
-    public User UpdateUser(User user, int id) {
+    public User UpdateUser(User user, UUID id) {
 
         User userOptional = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
 
@@ -45,15 +61,16 @@ public class UserService /* implements UserDetailsService */ {
         return userRepository.save(userOptional);
     }
 
-    public String DeleteUser(int id) {
+    public String DeleteUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
         userRepository.delete(user);
         return "deleted successfully";
     }
-/*
+
     @Override
-    public User loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findUserByEmail(email).orElseThrow( ()->
-                new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
-    } */
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with provided email: " + email));
+        return UserDetailsImpl.build(user);
+    }
 }

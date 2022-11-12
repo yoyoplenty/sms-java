@@ -1,46 +1,45 @@
 package com.example.SchoolManagementSystem.Users;
 
-import com.example.SchoolManagementSystem.Enum.Roles;
-import lombok.Getter;
+import com.example.SchoolManagementSystem.Roles.Roles;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
-@Getter
-@Setter
-@ToString
+@Data
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-public class User /*implements UserDetails */ {
+public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "firstName")
-    @NotBlank(message = "firstName cannot be empty")
+    @NonNull
     private String firstName;
 
     @Column(name = "lastName")
-    @NotBlank(message = "lastName cannot be empty")
+    @NonNull
     private String lastName;
 
     @Column(name = "email")
-    @Email(message = "please provide a valid email address")
-    @NotBlank(message = "email cannot be empty")
+    @NonNull
     private String email;
 
     @Column(name = "phoneNumber")
+    @NonNull
     private String phoneNumber;
 
     @Column(name = "password")
+    @NonNull
     private String password;
 
     @Column(name = "locked")
@@ -55,70 +54,13 @@ public class User /*implements UserDetails */ {
     @Column(name = "accessToken")
     private String accessToken;
 
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private Roles roles;
+    private String username;
 
-    /*
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "users_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Roles> roles = new HashSet<>();
 
-//    @ManyToOne
-//    @JoinColumn(name = "role_id")
-//    private Role role;
-
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "user_roles",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id")
-//    )
-//    private Set<Role> roles = new HashSet<>();
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roles.name());
-        return Collections.singleton(authority);
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    } */
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return id != null && Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

@@ -6,30 +6,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("api/v1/users")
 public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping()
-    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
-        try {
-            User newUser = userService.createUser(user);
-            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
-        }
-    }
+//TODO user should not be created here
+    
+//    @PostMapping()
+//    public ResponseEntity<Object> createUser(@Valid @RequestBody NewUserDto user) {
+//        try {
+//            User newUser = userService.createUser(user);
+//            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
+//        } catch (Exception e) {
+//            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+//        }
+//    }
 
     @GetMapping()
     public ResponseEntity<Object> getUsers() {
         try {
             List<User> allUsers = userService.getAllUsers();
-//            System.out.println(allUsers);
             return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, allUsers);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> GetOneUser(@PathVariable int id) {
+    public ResponseEntity<Object> GetOneUser(@PathVariable UUID id) {
         try {
             User userGotten = userService.GetUser(id);
             return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, userGotten);
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> UpdateUser(@PathVariable int id, @RequestBody User user) {
+    public ResponseEntity<Object> UpdateUser(@PathVariable UUID id, @RequestBody User user) {
         try {
             User updatedUser = userService.UpdateUser(user, id);
             return ResponseHandler.generateResponse("Updated", HttpStatus.OK, updatedUser);
@@ -57,7 +58,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> Delete(@PathVariable int id) {
+    public ResponseEntity<Object> Delete(@PathVariable UUID id) {
         try {
             String result = userService.DeleteUser(id);
             return ResponseHandler.generateResponse("Deleted!", HttpStatus.OK, result);

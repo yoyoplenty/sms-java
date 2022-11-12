@@ -1,4 +1,4 @@
-package com.example.SchoolManagementSystem.SchoolUser;
+package com.example.SchoolManagementSystem.SchoolClass.SchoolUser;
 
 
 import lombok.Data;
