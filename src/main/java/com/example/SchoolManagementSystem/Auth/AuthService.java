@@ -45,10 +45,14 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 
+        User user = userService.findUserByEmail(loginDto.getEmail());
+        if (!user.getEnabled())
+            throw new IllegalStateException("user is inactive, please check your mail and confirm email");
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("accessToken", jwt);
         data.put("user", authentication.getPrincipal());
         data.put("authorities", authentication.getAuthorities());
@@ -56,6 +60,11 @@ public class AuthService {
         return data;
     }
 
-//    public Object confirmEmail(String token) {
-//    }
+    public Object confirmEmail(String token) {
+        jwtUtils.validateJwtToken(token);
+        String decodedToken = jwtUtils.getUserNameFromJwtToken(token);
+
+        User user = userService.findUserByConfirmToken(decodedToken);
+        return userService.updateStatus(user.getId(), true);
+    }
 }

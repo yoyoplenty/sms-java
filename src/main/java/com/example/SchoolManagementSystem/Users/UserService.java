@@ -1,12 +1,11 @@
 package com.example.SchoolManagementSystem.Users;
 
 import com.example.SchoolManagementSystem.Auth.Security.Service.UserDetailsImpl;
+import com.example.SchoolManagementSystem.Enum.EnumEmailContent;
 import com.example.SchoolManagementSystem.Role.RoleService;
 import com.example.SchoolManagementSystem.Role.Roles;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
-import com.example.SchoolManagementSystem.Utils.Email.Dto.MailData;
 import com.example.SchoolManagementSystem.Utils.Email.EmailService;
-import com.example.SchoolManagementSystem.Utils.Helpers.TokenService;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +24,7 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
-    @Autowired
-    TokenService tokenService;
+
 
     private final static String USER_NOT_FOUND = "user with the email %s not found";
 
@@ -36,8 +34,8 @@ public class UserService implements UserDetailsService {
 
         User user = new User(newUserDto.getFirstName(), newUserDto.getLastName(), newUserDto.getEmail(), newUserDto.getPhoneNumber(), newUserDto.getPassword());
 
-        String token = UUID.randomUUID().toString();
-        user.setConfirmToken(tokenService.generateToken(token));
+        String confirmToken = UUID.randomUUID().toString();
+        user.setConfirmToken(confirmToken);
 
         List<UUID> roleIds = newUserDto.getRoleId();
         Set<Roles> roles = new HashSet<>();
@@ -50,14 +48,22 @@ public class UserService implements UserDetailsService {
         user.setRoles(roles);
         User newUser = userRepository.save(user);
 
-        MailData emailData = EmailData(newUser);
-        emailService.sendEmail(emailData);
-
+        emailService.sendEmailToUser(newUser, EnumEmailContent.RegistrantEmail);
         return newUser;
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public User findUserByConfirmToken(String token) {
+        return userRepository.findUserByConfirmToken(token)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with token: " + token));
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
     public User GetUser(UUID id) {
@@ -67,8 +73,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User UpdateUser(User user, UUID id) {
-
-        User userOptional = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
+        User userOptional = userRepository.findById(id).
+                orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
 
         userOptional.setFirstName(user.getFirstName());
         userOptional.setLastName(user.getLastName());
@@ -78,19 +84,17 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userOptional);
     }
 
+    public User updateStatus(UUID id, Boolean status) {
+        User user = GetUser(id);
+
+        user.setEnabled(status);
+        return userRepository.save(user);
+    }
+
     public String DeleteUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
         userRepository.delete(user);
         return "deleted successfully";
-    }
-
-    public MailData EmailData(User user) {
-        return MailData.builder()
-                .receiver(user.getEmail())
-                .body("You have Successfully registered")
-                .subject("Welcome Here " + user.getFirstName())
-                .build();
-
     }
 
 

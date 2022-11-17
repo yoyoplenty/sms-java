@@ -25,7 +25,7 @@ public class TokenService {
                 .compact();
     }
 
-    public String verifyToken(String token) {
+    public String decodeToken(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
