@@ -1,10 +1,7 @@
 package com.example.SchoolManagementSystem.Users;
 
-import com.example.SchoolManagementSystem.Roles.Roles;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import com.example.SchoolManagementSystem.Role.Roles;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -12,8 +9,10 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
+@Builder
 @RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class User {
@@ -22,11 +21,11 @@ public class User {
     @GeneratedValue
     private UUID id = UUID.randomUUID();
 
-    @Column(name = "firstName")
+    @Column(name = "firstname")
     @NonNull
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     @NonNull
     private String lastName;
 
@@ -34,7 +33,7 @@ public class User {
     @NonNull
     private String email;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     @NonNull
     private String phoneNumber;
 
@@ -42,25 +41,24 @@ public class User {
     @NonNull
     private String password;
 
-    @Column(name = "locked")
-    private Boolean locked;
+    @Column(name = "locked", nullable = false)
+    private Boolean locked = false;
 
-    @Column(name = "enabled")
-    private Boolean enabled;
-
-    @Column(name = "confirmToken")
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
+    
+    @Column(name = "confirm_token")
     private String confirmToken;
 
-    @Column(name = "accessToken")
+    @Column(name = "access_token")
     private String accessToken;
 
     private String username;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_role",
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Roles> roles = new HashSet<>();
-
 }

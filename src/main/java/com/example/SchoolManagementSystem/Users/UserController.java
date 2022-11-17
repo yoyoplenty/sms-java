@@ -1,6 +1,6 @@
 package com.example.SchoolManagementSystem.Users;
 
-import com.example.SchoolManagementSystem.Responses.ResponseHandler;
+import com.example.SchoolManagementSystem.Utils.Handlers.Responses.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,26 +14,14 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     UserService userService;
-
-//TODO user should not be created here
     
-//    @PostMapping()
-//    public ResponseEntity<Object> createUser(@Valid @RequestBody NewUserDto user) {
-//        try {
-//            User newUser = userService.createUser(user);
-//            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
-//        } catch (Exception e) {
-//            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
-//        }
-//    }
-
     @GetMapping()
     public ResponseEntity<Object> getUsers() {
         try {
             List<User> allUsers = userService.getAllUsers();
             return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, allUsers);
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 
@@ -43,7 +31,7 @@ public class UserController {
             User userGotten = userService.GetUser(id);
             return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, userGotten);
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 
@@ -51,9 +39,9 @@ public class UserController {
     public ResponseEntity<Object> UpdateUser(@PathVariable UUID id, @RequestBody User user) {
         try {
             User updatedUser = userService.UpdateUser(user, id);
-            return ResponseHandler.generateResponse("Updated", HttpStatus.OK, updatedUser);
+            return ResponseHandler.generateResponse("User updated successfully", HttpStatus.OK, updatedUser);
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 
@@ -61,9 +49,21 @@ public class UserController {
     public ResponseEntity<Object> Delete(@PathVariable UUID id) {
         try {
             String result = userService.DeleteUser(id);
-            return ResponseHandler.generateResponse("Deleted!", HttpStatus.OK, result);
+            return ResponseHandler.generateResponse("User deleted successfully!", HttpStatus.OK, result);
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 }
+
+//TODO user should not be created here
+
+//    @PostMapping()
+//    public ResponseEntity<Object> createUser(@Valid @RequestBody NewUserDto user) {
+//        try {
+//            User newUser = userService.createUser(user);
+//            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
+//        } catch (Exception e) {
+//            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+//        }
+//    }

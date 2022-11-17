@@ -1,6 +1,6 @@
 package com.example.SchoolManagementSystem.Enum;
 
-public enum Role {
+public enum EnumRole {
     SYSTEM_ADMIN,
     SCHOOL_ADMIN,
     TEACHERS,

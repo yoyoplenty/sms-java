@@ -1,6 +1,6 @@
 package com.example.SchoolManagementSystem.Student;
 
-import com.example.SchoolManagementSystem.Schools.School;
+import com.example.SchoolManagementSystem.School.School;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -3,9 +3,9 @@ package com.example.SchoolManagementSystem.Auth;
 
 import com.example.SchoolManagementSystem.Auth.Dto.LoginDto;
 import com.example.SchoolManagementSystem.Auth.Security.Jwt.JwtUtils;
-import com.example.SchoolManagementSystem.Responses.ResponseHandler;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import com.example.SchoolManagementSystem.Users.User;
+import com.example.SchoolManagementSystem.Utils.Handlers.Responses.ResponseHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,20 +35,33 @@ public class AuthController {
     public ResponseEntity<Object> SignUp(@Valid @RequestBody NewUserDto user) {
         try {
             User newUser = authService.signUp(user);
-            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
+            return ResponseHandler.generateResponse("Successfully created user, please check your mail!", HttpStatus.OK, newUser);
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
 
     @PostMapping("/signin")
     public ResponseEntity<Object> SignIn(@Valid @RequestBody LoginDto loginDto) {
         try {
-            String jwt = authService.signIn(loginDto);
+            Object data = authService.signIn(loginDto);
 
-            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, jwt);
+            return ResponseHandler.generateResponse("Successfully signed in!", HttpStatus.OK, data);
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
+
+//    @GetMapping("confirm_email/{token}")
+//    public ResponseEntity<Object> confirmEmail(@PathVariable String token) {
+//        try {
+//            Object data = authService.confirmEmail(token);
+//
+//            return ResponseHandler.generateResponse("Successfully confirmed email!", HttpStatus.OK, data);
+//        } catch (Exception e) {
+//            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+//        }
+//    }
+
+
 }

@@ -1,7 +1,7 @@
 package com.example.SchoolManagementSystem.Payment;
 
-import com.example.SchoolManagementSystem.Events.Event;
-import com.example.SchoolManagementSystem.Schools.School;
+import com.example.SchoolManagementSystem.Event.Event;
+import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Student.Student;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "payments")
+@Table(name = "payment")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

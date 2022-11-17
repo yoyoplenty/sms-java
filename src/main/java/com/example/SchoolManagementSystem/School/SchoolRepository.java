@@ -1,4 +1,4 @@
-package com.example.SchoolManagementSystem.Schools;
+package com.example.SchoolManagementSystem.School;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,13 +1,13 @@
-package com.example.SchoolManagementSystem.Events;
+package com.example.SchoolManagementSystem.Event;
 
-import com.example.SchoolManagementSystem.Schools.School;
+import com.example.SchoolManagementSystem.School.School;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "events")
+@Table(name = "event")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

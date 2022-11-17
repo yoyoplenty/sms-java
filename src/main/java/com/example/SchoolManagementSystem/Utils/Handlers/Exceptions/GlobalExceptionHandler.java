@@ -1,4 +1,4 @@
-package com.example.SchoolManagementSystem.exceptions;
+package com.example.SchoolManagementSystem.Utils.Handlers.Exceptions;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

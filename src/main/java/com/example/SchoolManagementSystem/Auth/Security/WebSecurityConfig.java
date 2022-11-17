@@ -1,6 +1,5 @@
 package com.example.SchoolManagementSystem.Auth.Security;
 
-
 import com.example.SchoolManagementSystem.Auth.Security.Jwt.AuthEntryPointJwt;
 import com.example.SchoolManagementSystem.Auth.Security.Jwt.AuthTokenFilter;
 import com.example.SchoolManagementSystem.Users.UserService;

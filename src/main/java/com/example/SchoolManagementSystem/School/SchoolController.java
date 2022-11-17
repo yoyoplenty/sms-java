@@ -1,6 +1,6 @@
-package com.example.SchoolManagementSystem.Schools;
+package com.example.SchoolManagementSystem.School;
 
-import com.example.SchoolManagementSystem.Responses.ResponseHandler;
+import com.example.SchoolManagementSystem.Utils.Handlers.Responses.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

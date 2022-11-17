@@ -1,4 +1,4 @@
-package com.example.SchoolManagementSystem.Responses;
+package com.example.SchoolManagementSystem.Utils.Handlers.Responses;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
-package com.example.SchoolManagementSystem.Results;
+package com.example.SchoolManagementSystem.Result;
 
 
-import com.example.SchoolManagementSystem.Schools.School;
+import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Student.Student;
 import lombok.Data;
 

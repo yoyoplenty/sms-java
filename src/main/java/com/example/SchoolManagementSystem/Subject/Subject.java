@@ -1,19 +1,22 @@
-package com.example.SchoolManagementSystem.Subjects;
+package com.example.SchoolManagementSystem.Subject;
 
-import com.example.SchoolManagementSystem.Teachers.Teacher;
+import com.example.SchoolManagementSystem.Teacher.Teacher;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "subjects")
+@Table(name = "subject")
 public class Subject {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "name")
     @NotBlank(message = "firstName cannot be empty")
@@ -25,6 +28,7 @@ public class Subject {
 
     private String grade;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "subjects")
-    private Collection<Teacher> teachers;
+    private List<Teacher> teachers = new ArrayList<>();
 }

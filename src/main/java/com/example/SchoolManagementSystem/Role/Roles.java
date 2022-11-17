@@ -1,18 +1,15 @@
-package com.example.SchoolManagementSystem.Roles;
+package com.example.SchoolManagementSystem.Role;
 
-import lombok.Getter;
+import com.example.SchoolManagementSystem.Enum.EnumRole;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
-@Getter
-@Setter
-@ToString
+@Data
 @RequiredArgsConstructor
 @Entity
 @Table(name = "role")
@@ -23,7 +20,7 @@ public class Roles {
 
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    public com.example.SchoolManagementSystem.Enum.Role name;
+    public EnumRole name;
 
     @Override
     public boolean equals(Object o) {

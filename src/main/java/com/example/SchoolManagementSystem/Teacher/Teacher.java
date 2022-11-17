@@ -1,29 +1,31 @@
-package com.example.SchoolManagementSystem.Teachers;
+package com.example.SchoolManagementSystem.Teacher;
 
 
-import com.example.SchoolManagementSystem.Schools.School;
-import com.example.SchoolManagementSystem.Subjects.Subject;
+import com.example.SchoolManagementSystem.School.School;
+import com.example.SchoolManagementSystem.Subject.Subject;
 import com.example.SchoolManagementSystem.Users.User;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "teachers")
+@Table(name = "teacher")
 public class Teacher {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue
+    private UUID id = UUID.randomUUID();
 
-    @Column(name = "firstName")
+    @Column(name = "firstname")
     @NotBlank(message = "firstName cannot be empty")
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     @NotBlank(message = "lastName cannot be empty")
     private String lastName;
 
@@ -32,23 +34,21 @@ public class Teacher {
     @NotBlank(message = "email cannot be empty")
     private String email;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @ManyToOne
     @JoinColumn(name = "school_id")
     private School school;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "teacher_subject",
+    @JoinTable(name = "subject_teacher",
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
-    private Collection<Subject> subjects;
+    private List<Subject> subjects = new ArrayList<>();
 }

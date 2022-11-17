@@ -1,4 +1,4 @@
-package com.example.SchoolManagementSystem.Schools;
+package com.example.SchoolManagementSystem.School;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
-@Table(name = "schools", uniqueConstraints = {@UniqueConstraint(columnNames = {"schoolEmail"})})
+@Table(name = "school", uniqueConstraints = {@UniqueConstraint(columnNames = {"schoolEmail"})})
 public class School {
 
     @Id
