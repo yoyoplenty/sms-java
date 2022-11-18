@@ -1,8 +1,7 @@
 package com.example.SchoolManagementSystem.Auth;
 
-
+import com.example.SchoolManagementSystem.Auth.Dto.ForgetPasswordDto;
 import com.example.SchoolManagementSystem.Auth.Dto.LoginDto;
-import com.example.SchoolManagementSystem.Auth.Security.Jwt.JwtUtils;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import com.example.SchoolManagementSystem.Users.User;
 import com.example.SchoolManagementSystem.Utils.Handlers.Responses.ResponseHandler;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,14 +17,9 @@ import javax.validation.Valid;
 @RequestMapping("api/v1/auth")
 @AllArgsConstructor
 public class AuthController {
-
-    @Autowired
-    AuthenticationManager authenticationManager;
     @Autowired
     AuthService authService;
 
-    @Autowired
-    JwtUtils jwtUtils;
 
     @PostMapping("/signup")
     public ResponseEntity<Object> SignUp(@Valid @RequestBody NewUserDto user) {
@@ -60,5 +53,37 @@ public class AuthController {
         }
     }
 
+    @PostMapping("forget_password")
+    public ResponseEntity<Object> forgetPassword(@RequestBody @Valid ForgetPasswordDto forgetPasswordDto) {
+        try {
+            Object data = authService.forgetPassword(forgetPasswordDto.getEmail());
+
+            return ResponseHandler.generateResponse("forget password email sent!", HttpStatus.OK, data);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @PatchMapping("reset_password/{token}")
+    public ResponseEntity<Object> resetPassword(@PathVariable String token, @RequestBody @Valid ForgetPasswordDto forgetPasswordDto) {
+        try {
+            Object data = authService.resetPassword(token, forgetPasswordDto.getPassword());
+
+            return ResponseHandler.generateResponse("password reset successful", HttpStatus.OK, data);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @PatchMapping("resend_email/{email}")
+    public ResponseEntity<Object> resendEmail(@PathVariable String email) {
+        try {
+            Object data = authService.resendEmail(email);
+
+            return ResponseHandler.generateResponse("email successfully sent!", HttpStatus.OK, data);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
 
 }

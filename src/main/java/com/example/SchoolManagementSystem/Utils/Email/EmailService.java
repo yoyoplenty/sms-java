@@ -55,27 +55,30 @@ public class EmailService {
         } else throw new IllegalStateException("user saved, unable to send email");
     }
 
-    public void sendEmailToUser(User user, EnumEmailContent RegistrantEmail) throws UnirestException {
+    public void sendEmailToUser(User user, EnumEmailContent generatedEmail) throws UnirestException {
+        Map<String, Object> content = generateContent(generatedEmail, user);
 
-        Map<String, String> content = generateContent(RegistrantEmail, user);
-
+        String subject = content.get("subject").toString();
         MailData newMailData = MailData.builder()
                 .receiver(user.getEmail())
                 .body(content.get("body"))
-                .subject(content.get("subject"))
+                .subject(subject)
                 .build();
 
+        logger.info(content.get("body").toString());
         sendEmail(newMailData);
     }
 
-    public Map<String, String> generateContent(EnumEmailContent mailContent, User user) {
-        String token = tokenService.generateToken(user.getConfirmToken());
+    public Map<String, Object> generateContent(EnumEmailContent mailContent, User user) {
 
         switch (mailContent) {
             case RegistrantEmail -> {
-                return emailContent.RegistrationMail(user, token);
+                return emailContent.RegistrationMail(user);
             }
-            case ForgetPasswordEmail -> System.out.println("Tuesday");
+
+            case ForgetPasswordMail -> {
+                return emailContent.ForgetPasswordMail(user);
+            }
         }
         return null;
     }

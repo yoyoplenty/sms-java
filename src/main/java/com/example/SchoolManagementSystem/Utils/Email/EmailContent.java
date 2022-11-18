@@ -1,6 +1,8 @@
 package com.example.SchoolManagementSystem.Utils.Email;
 
 import com.example.SchoolManagementSystem.Users.User;
+import com.example.SchoolManagementSystem.Utils.Helpers.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,18 +11,37 @@ import java.util.Map;
 @Component
 public class EmailContent {
 
-    public Map<String, String> RegistrationMail(User user, String token) {
-        String name = user.getFirstName();
-        String emailBody = String
-                .format("Welcome to HAIM School Management System"
-                        + name + "You are welcome, please click on the link below to activate your account " + user.getLastName() +
-                        " localhost:5050/auth/confirm_email/" + token);
+    @Autowired
+    TokenService tokenService;
 
-        Map<String, String> mailContent = new HashMap<>();
+
+    public Map<String, Object> RegistrationMail(User user) {
+        String token = tokenService.generateToken(user.getConfirmToken());
+
+        StringBuilder emailBody = new StringBuilder();
+        emailBody.append("Welcome to HAIM School Management System. ").append(user.getFirstName()).append(" ").append(user.getLastName());
+        emailBody.append(" You are welcome, please click on the link below to activate your account ");
+        emailBody.append(" localhost:5050/auth/confirm_email/").append(token);
+
+        Map<String, Object> mailContent = new HashMap<>();
         mailContent.put("subject", "Registration Confirmed");
         mailContent.put("body", emailBody);
 
         return mailContent;
     }
 
+    public Map<String, Object> ForgetPasswordMail(User user) {
+        String token = tokenService.generateToken(user.getAccessToken());
+
+        StringBuilder emailBody = new StringBuilder();
+        emailBody.append("Dear. ").append(user.getFirstName()).append(" ").append(user.getLastName());
+        emailBody.append(" You are welcome, please click on the link below to activate your account ");
+        emailBody.append("localhost:5050/auth/reset_password/").append(token);
+
+        Map<String, Object> mailContent = new HashMap<>();
+        mailContent.put("subject", "Forget Password");
+        mailContent.put("body", emailBody);
+
+        return mailContent;
+    }
 }

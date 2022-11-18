@@ -66,6 +66,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
+    public User findUserByAccessToken(String accessToken) {
+        return userRepository.findUserByAccessToken(accessToken)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
+    }
+
     public User GetUser(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) return userOptional.get();
@@ -80,6 +86,7 @@ public class UserService implements UserDetailsService {
         userOptional.setLastName(user.getLastName());
         userOptional.setPhoneNumber(user.getPhoneNumber());
         userOptional.setEmail(user.getEmail());
+        userOptional.setAccessToken(user.getAccessToken());
 
         return userRepository.save(userOptional);
     }
@@ -104,4 +111,5 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with provided email: " + email));
         return UserDetailsImpl.build(user);
     }
+
 }
