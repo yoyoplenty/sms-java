@@ -75,7 +75,7 @@ public class AuthController {
         }
     }
 
-    @PatchMapping("resend_email/{email}")
+    @PostMapping("resend_email/{email}")
     public ResponseEntity<Object> resendEmail(@PathVariable String email) {
         try {
             Object data = authService.resendEmail(email);
