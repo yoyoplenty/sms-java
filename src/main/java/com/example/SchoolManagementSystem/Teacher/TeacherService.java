@@ -56,8 +56,8 @@ public class TeacherService {
         subjectIds.forEach(subjectId -> {
             Subject subject = subjectService.findSubjectById(subjectId);
 
-            List<Teacher> subjectPresent = teacherRepository.findSubjectInTeacher(subjectId);
-            if (subjectPresent.size() > 0) throw new IllegalStateException("Subject already assigned teacher");
+            Teacher subjectPresent = teacherRepository.findSubjectInTeacher(subjectId, newTeacher.getId());
+            if (subjectPresent != null) throw new IllegalStateException("Subject already assigned teacher");
 
             subjects.add(subject);
         });
@@ -76,7 +76,7 @@ public class TeacherService {
         throw new IllegalStateException("teacher not found");
     }
 
-    public Teacher updateTeacher(UpdateTeacherDto updateTeacherDto, UUID id) {
+    public Object updateTeacher(UpdateTeacherDto updateTeacherDto, UUID id) {
         Teacher teacherOptional = teacherRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("teacher not found on :: " + id));
 
@@ -88,8 +88,8 @@ public class TeacherService {
             for (UUID subjectId : subjectIds) {
                 Subject subject = subjectService.findSubjectById(subjectId);
 
-                List<Teacher> subjectPresent = teacherRepository.findSubjectInTeacher(subjectId);
-                if (subjectPresent.size() > 0) throw new IllegalStateException("Subject already assigned to teacher");
+                Teacher subjectPresent = teacherRepository.findSubjectInTeacher(subjectId, teacherOptional.getId());
+                if (subjectPresent != null) throw new IllegalStateException("Subject already assigned teacher");
 
                 teacherSubjects.add(subject);
             }

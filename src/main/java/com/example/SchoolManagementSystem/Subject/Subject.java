@@ -33,7 +33,8 @@ public class Subject implements Serializable {
     @Column(name = "grade")
     private EnumGrade grade;
 
-    @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "subjects", cascade =
+            {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Teacher> teachers;
 }
