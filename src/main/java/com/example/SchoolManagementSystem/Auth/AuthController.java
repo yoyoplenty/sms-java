@@ -20,7 +20,6 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-
     @PostMapping("/signup")
     public ResponseEntity<Object> SignUp(@Valid @RequestBody NewUserDto user) {
         try {

@@ -21,7 +21,6 @@ public class UserService implements UserDetailsService {
     UserRepository userRepository;
     @Autowired
     RoleService roleService;
-
     @Autowired
     EmailService emailService;
 
@@ -56,6 +55,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    public User GetUser(UUID id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) return userOptional.get();
+        throw new IllegalStateException("user not found");
+    }
+
     public User findUserByConfirmToken(String token) {
         return userRepository.findUserByConfirmToken(token)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with token: " + token));
@@ -70,12 +75,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserByAccessToken(accessToken)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-    }
-
-    public User GetUser(UUID id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) return userOptional.get();
-        throw new IllegalStateException("user not found");
     }
 
     public User UpdateUser(User user, UUID id) {
@@ -111,5 +110,4 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with provided email: " + email));
         return UserDetailsImpl.build(user);
     }
-
 }

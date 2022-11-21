@@ -1,47 +1,43 @@
 package com.example.SchoolManagementSystem.School;
 
+import com.example.SchoolManagementSystem.Address.Address;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.UUID;
 
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "school", uniqueConstraints = {@UniqueConstraint(columnNames = {"schoolEmail"})})
+@Table(name = "school", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class School {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue
+    private UUID id = UUID.randomUUID();
 
-    @Column(name = "schoolName")
-    @NotBlank(message = "school name cannot be empty")
-    private String schoolName;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "schoolAddress")
-    @NotBlank(message = "school address cannot be left empty")
-    private String schoolAddress;
-
-    @Column(name = "schoolEmail")
+    @Column(name = "email")
     @Email(message = "please provide a valid email address")
-    @NotBlank(message = "school email cannot be empty")
-    private String schoolEmail;
+    private String email;
 
-    @Column(name = "contactPersonName")
-    @NotBlank(message = "contact person's name cannot be empty")
-    private String contactPersonName;
+    @OneToMany(mappedBy = "school", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Address> address;
 
-    @Column(name = "contactPersonEmail")
-    @NotBlank(message = "contact person's email cannot be empty")
-    private String contactPersonEmail;
+    @Column(name = "locked", nullable = false)
+    private Boolean locked = false;
 
-    @Column(name = "contactPersonPhone")
-    @NotBlank(message = "contact person's phone cannot be empty")
-    private String contactPersonPhone;
-
-    @Column(name = "isActive")
-    private Boolean isActive = true;
-
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
 }

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
 public class NewUserDto {
     @NotBlank(message = "firstname cannot be empty")
     private String firstName;

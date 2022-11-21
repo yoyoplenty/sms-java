@@ -4,16 +4,21 @@ package com.example.SchoolManagementSystem.Teacher;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Subject.Subject;
 import com.example.SchoolManagementSystem.Users.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "teacher")
 public class Teacher {
@@ -21,23 +26,14 @@ public class Teacher {
     @GeneratedValue
     private UUID id = UUID.randomUUID();
 
-    @Column(name = "firstname")
-    @NotBlank(message = "firstName cannot be empty")
-    private String firstName;
+    @Column(name = "middlename")
+    private String middleName;
 
-    @Column(name = "lastname")
-    @NotBlank(message = "lastName cannot be empty")
-    private String lastName;
+    @Column(name = "staff_id")
+    private String staffId;
 
-    @Column(name = "email")
-    @Email(message = "please provide a valid email address")
-    @NotBlank(message = "email cannot be empty")
-    private String email;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     private School school;
 
@@ -45,10 +41,11 @@ public class Teacher {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JsonManagedReference
     @JoinTable(name = "subject_teacher",
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
-    private List<Subject> subjects = new ArrayList<>();
+    private List<Subject> subjects;
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     UserService userService;
-    
+
     @GetMapping()
     public ResponseEntity<Object> getUsers() {
         try {
@@ -55,15 +55,3 @@ public class UserController {
         }
     }
 }
-
-//TODO user should not be created here
-
-//    @PostMapping()
-//    public ResponseEntity<Object> createUser(@Valid @RequestBody NewUserDto user) {
-//        try {
-//            User newUser = userService.createUser(user);
-//            return ResponseHandler.generateResponse("Successfully created user!", HttpStatus.OK, newUser);
-//        } catch (Exception e) {
-//            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
-//        }
-//    }

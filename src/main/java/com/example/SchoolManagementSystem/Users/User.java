@@ -46,7 +46,7 @@ public class User {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = false;
-    
+
     @Column(name = "confirm_token")
     private String confirmToken;
 

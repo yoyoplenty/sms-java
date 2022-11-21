@@ -53,7 +53,7 @@ public class AuthService {
 
         User user = userService.findUserByEmail(loginDto.getEmail());
         if (!user.getEnabled())
-            throw new IllegalStateException("user is inactive, please check your mail and confirm email");
+            throw new IllegalStateException("user is inactive, please check your mail and confirm email address");
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -103,7 +103,7 @@ public class AuthService {
         User user = userService.findUserByEmail(email);
         if (user.getEnabled())
             throw new IllegalStateException("user already active");
-        
+
         emailService.sendEmailToUser(user, EnumEmailContent.RegistrantEmail);
         return user;
     }
