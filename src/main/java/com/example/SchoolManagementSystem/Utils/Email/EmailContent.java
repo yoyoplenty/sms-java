@@ -31,7 +31,7 @@ public class EmailContent {
     }
 
     public Map<String, Object> ForgetPasswordMail(User user) {
-        String token = tokenService.generateToken(user.getAccessToken());
+        String token = tokenService.generateToken(user.getResetToken());
 
         StringBuilder emailBody = new StringBuilder();
         emailBody.append("Dear. ").append(user.getFirstName()).append(" ").append(user.getLastName());

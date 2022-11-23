@@ -1,16 +1,19 @@
-package com.example.SchoolManagementSystem.Users.Dto;
+package com.example.SchoolManagementSystem.Student.Dto;
 
 import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
+
 @Data
-public class NewUserDto {
+public class NewStudentDto {
+
+    private String studentId;
+
+    private UUID schoolId;
+
     @NotBlank(message = "firstname cannot be empty")
     private String firstName;
 
@@ -19,9 +22,6 @@ public class NewUserDto {
 
     private String middleName;
 
-    private String email;
-
-    @NotBlank(message = "phone number cannot be empty")
     private String phoneNumber;
 
     private EnumUserType userType;
@@ -29,8 +29,7 @@ public class NewUserDto {
     @NotBlank(message = "password cannot be empty")
     private String password;
 
-    @NotEmpty(message = "role cannot be empty")
-    private List<UUID> roleId = new ArrayList<>();
+    private UUID roleId;
 
     private Boolean locked;
 
@@ -41,4 +40,5 @@ public class NewUserDto {
     private String accessToken;
 
     private String username;
+
 }

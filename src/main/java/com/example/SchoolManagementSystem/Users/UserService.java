@@ -4,21 +4,33 @@ import com.example.SchoolManagementSystem.Auth.Security.Service.UserDetailsImpl;
 import com.example.SchoolManagementSystem.Enum.EnumEmailContent;
 import com.example.SchoolManagementSystem.Role.RoleService;
 import com.example.SchoolManagementSystem.Role.Roles;
+import com.example.SchoolManagementSystem.Student.Student;
+import com.example.SchoolManagementSystem.Student.StudentRepository;
+import com.example.SchoolManagementSystem.Student.StudentService;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import com.example.SchoolManagementSystem.Utils.Email.EmailService;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Controller
+@Service
 public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    StudentService studentService;
+
+    @Autowired
+    StudentRepository studentRepository;
+
     @Autowired
     RoleService roleService;
     @Autowired
@@ -26,12 +38,25 @@ public class UserService implements UserDetailsService {
 
 
     private final static String USER_NOT_FOUND = "user with the email %s not found";
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
     public User createUser(NewUserDto newUserDto) throws UnirestException {
-        Optional<User> userOptional = userRepository.findUserByEmail(newUserDto.getEmail());
-        if (userOptional.isPresent()) throw new IllegalStateException("User already exists");
+        if (newUserDto.getEmail() != null) {
+            Optional<User> userOptional = userRepository.findUserByEmail(newUserDto.getEmail());
+            if (userOptional.isPresent()) throw new IllegalStateException("User already exists");
+        }
 
-        User user = new User(newUserDto.getFirstName(), newUserDto.getLastName(), newUserDto.getEmail(), newUserDto.getPhoneNumber(), newUserDto.getPassword());
+        User user = User.builder()
+                .firstName(newUserDto.getFirstName())
+                .lastName(newUserDto.getLastName())
+                .email(newUserDto.getEmail())
+                .phoneNumber(newUserDto.getPhoneNumber())
+                .password(newUserDto.getPassword())
+                .userType(newUserDto.getUserType())
+                .enabled(false)
+                .locked(false)
+                .build();
 
         String confirmToken = UUID.randomUUID().toString();
         user.setConfirmToken(confirmToken);
@@ -71,8 +96,8 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
-    public User findUserByAccessToken(String accessToken) {
-        return userRepository.findUserByAccessToken(accessToken)
+    public User findUserByResetToken(String resetToken) {
+        return userRepository.findUserByResetToken(resetToken)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
     }
@@ -84,8 +109,7 @@ public class UserService implements UserDetailsService {
         userOptional.setFirstName(user.getFirstName());
         userOptional.setLastName(user.getLastName());
         userOptional.setPhoneNumber(user.getPhoneNumber());
-        userOptional.setEmail(user.getEmail());
-        userOptional.setAccessToken(user.getAccessToken());
+        userOptional.setResetToken(user.getResetToken());
 
         return userRepository.save(userOptional);
     }
@@ -98,16 +122,30 @@ public class UserService implements UserDetailsService {
     }
 
     public String DeleteUser(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
+
         userRepository.delete(user);
         return "deleted successfully";
     }
 
-
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with provided email: " + email));
-        return UserDetailsImpl.build(user);
+    public UserDetails loadUserByUsername(String data) throws UsernameNotFoundException {
+        try {
+            User user = userRepository.findByEmail(data);
+            Student student = studentRepository.findByStudentId(data);
+
+            return user == null ? UserDetailsImpl.buildStudent(student) : UserDetailsImpl.build(user);
+        } catch (Exception e) {
+            throw new IllegalStateException("invalid login credentials");
+        }
     }
+
 }
+
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        User user = userRepository.findUserByEmail(email)
+//                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with provided email: " + email));
+//        return UserDetailsImpl.build(user);
+//    }

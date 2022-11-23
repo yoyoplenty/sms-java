@@ -26,9 +26,6 @@ public class Teacher {
     @GeneratedValue
     private UUID id = UUID.randomUUID();
 
-    @Column(name = "middlename")
-    private String middleName;
-
     @Column(name = "staff_id")
     private String staffId;
 
@@ -37,10 +34,9 @@ public class Teacher {
     @JoinColumn(name = "school_id")
     private School school;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
-
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JsonManagedReference
     @JoinTable(name = "subject_teacher",

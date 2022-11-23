@@ -8,6 +8,7 @@ import com.example.SchoolManagementSystem.Teacher.Dto.NewTeacherDto;
 import com.example.SchoolManagementSystem.Teacher.Dto.UpdateTeacherDto;
 import com.example.SchoolManagementSystem.Users.User;
 import com.example.SchoolManagementSystem.Users.UserService;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,18 +36,14 @@ public class TeacherService {
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
+    public Teacher createTeacher(NewTeacherDto newTeacherDto) throws UnirestException {
+        if (newTeacherDto.getEmail() == null) throw new IllegalArgumentException("email cannot be empty");
+        //TODO Validate the subjects coming from the request body
 
-    public Teacher createTeacher(NewTeacherDto newTeacherDto) {
         School school = schoolService.findSchoolById(newTeacherDto.getSchoolId());
-        User user = userService.GetUser(newTeacherDto.getUserId());
-
-        Optional<Teacher> teacher = teacherRepository.findTeacherByUserId(user.getId());
-        if (teacher.isPresent()) throw new IllegalStateException("teacher with that userId already exists");
 
         Teacher newTeacher = Teacher.builder()
-                .middleName(newTeacherDto.getMiddleName())
                 .staffId(UUID.randomUUID().toString().substring(0, 5))
-                .user(user)
                 .school(school)
                 .build();
 
@@ -63,6 +60,10 @@ public class TeacherService {
         });
 
         newTeacher.setSubjects(subjects);
+
+        User user = userService.createUser(newTeacherDto);
+        newTeacher.setUser(user);
+
         return teacherRepository.save(newTeacher);
     }
 
@@ -94,9 +95,17 @@ public class TeacherService {
                 teacherSubjects.add(subject);
             }
         }
-        teacherOptional.setMiddleName(teacherOptional.getMiddleName());
         teacherOptional.setSubjects(teacherSubjects);
 
         return teacherRepository.save(teacherOptional);
+    }
+
+    public String deleteTeacher(UUID id) {
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new IllegalStateException("Teacher not found on :: " + id));
+        teacherRepository.delete(teacher);
+
+        logger.info("User deleted successfully");
+
+        return "deleted successfully";
     }
 }

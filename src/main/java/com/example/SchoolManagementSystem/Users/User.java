@@ -1,7 +1,11 @@
 package com.example.SchoolManagementSystem.Users;
 
+import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import com.example.SchoolManagementSystem.Role.Roles;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -10,7 +14,6 @@ import java.util.UUID;
 
 @Data
 @Builder
-@RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -22,36 +25,34 @@ public class User {
     private UUID id = UUID.randomUUID();
 
     @Column(name = "firstname")
-    @NonNull
     private String firstName;
 
     @Column(name = "lastname")
-    @NonNull
     private String lastName;
 
     @Column(name = "email")
-    @NonNull
     private String email;
 
     @Column(name = "phone_number")
-    @NonNull
     private String phoneNumber;
 
+    @Column(name = "user_type")
+    private EnumUserType userType = EnumUserType.User;
+
     @Column(name = "password")
-    @NonNull
     private String password;
 
-    @Column(name = "locked", nullable = false)
-    private Boolean locked = false;
+    @Column(name = "locked")
+    private Boolean locked;
 
     @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false;
+    private Boolean enabled;
 
     @Column(name = "confirm_token")
     private String confirmToken;
 
-    @Column(name = "access_token")
-    private String accessToken;
+    @Column(name = "reset_token")
+    private String resetToken;
 
     private String username;
 

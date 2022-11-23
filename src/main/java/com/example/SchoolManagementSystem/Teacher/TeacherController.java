@@ -32,11 +32,11 @@ public class TeacherController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> createTeacher() {
+    public ResponseEntity<Object> getTeachers() {
         try {
-            List<Teacher> teacher = teacherService.getAllTeachers();
+            List<Teacher> teachers = teacherService.getAllTeachers();
 
-            return ResponseHandler.generateResponse("Successfully created teacher", HttpStatus.OK, teacher);
+            return ResponseHandler.generateResponse("Successfully fetched teacher", HttpStatus.OK, teachers);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
@@ -48,6 +48,17 @@ public class TeacherController {
             Object teacher = teacherService.updateTeacher(updateTeacherDto, id);
 
             return ResponseHandler.generateResponse("Successfully updated teacher", HttpStatus.OK, teacher);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteTeacher(@PathVariable UUID id) {
+        try {
+            Object teacher = teacherService.deleteTeacher(id);
+
+            return ResponseHandler.generateResponse("Successfully deleted teacher", HttpStatus.OK, teacher);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }

@@ -3,6 +3,7 @@ package com.example.SchoolManagementSystem.Auth;
 
 import com.example.SchoolManagementSystem.Auth.Dto.LoginDto;
 import com.example.SchoolManagementSystem.Auth.Security.Jwt.JwtUtils;
+import com.example.SchoolManagementSystem.Auth.Security.Service.UserDetailsImpl;
 import com.example.SchoolManagementSystem.Enum.EnumEmailContent;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import com.example.SchoolManagementSystem.Users.User;
@@ -48,10 +49,12 @@ public class AuthService {
 
     public Map<String, Object> signIn(LoginDto loginDto) throws LoginException {
         //This here authenticate user and return the principal (user)
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+        Authentication authentication = loginDto.getEmail() == null ?
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getStudentId(), loginDto.getPassword())) :
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 
-        User user = userService.findUserByEmail(loginDto.getEmail());
+        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
+
         if (!user.getEnabled())
             throw new IllegalStateException("user is inactive, please check your mail and confirm email address");
 
@@ -83,7 +86,7 @@ public class AuthService {
             throw new IllegalStateException("user is inactive, please check your mail and confirm email");
 
         String resetToken = UUID.randomUUID().toString();
-        user.setAccessToken(resetToken);
+        user.setResetToken(resetToken);
 
         emailService.sendEmailToUser(user, EnumEmailContent.ForgetPasswordMail);
         return userService.UpdateUser(user, user.getId());
@@ -92,8 +95,8 @@ public class AuthService {
     public Object resetPassword(String token, String password) {
         if (password.isEmpty()) throw new IllegalArgumentException("Password must not be empty");
 
-        String accessToken = jwtUtils.getUserNameFromJwtToken(token);
-        User user = userService.findUserByAccessToken(accessToken);
+        String resetToken = jwtUtils.getUserNameFromJwtToken(token);
+        User user = userService.findUserByResetToken(resetToken);
         user.setPassword(encoder.encode(password));
 
         return userService.UpdateUser(user, user.getId());

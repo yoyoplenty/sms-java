@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "subject")
-public class Subject implements Serializable {
+public class Subject {
     @Id
     @GeneratedValue
     private UUID id = UUID.randomUUID();
