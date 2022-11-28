@@ -72,7 +72,7 @@ public class EmailService {
     public Map<String, Object> generateContent(EnumEmailContent mailContent, User user) {
 
         switch (mailContent) {
-            case RegistrantEmail -> {
+            case RegistrationMail -> {
                 return emailContent.RegistrationMail(user);
             }
 

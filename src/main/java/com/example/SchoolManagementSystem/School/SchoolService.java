@@ -2,10 +2,12 @@ package com.example.SchoolManagementSystem.School;
 
 import com.example.SchoolManagementSystem.Address.Address;
 import com.example.SchoolManagementSystem.Address.AddressService;
+import com.example.SchoolManagementSystem.Address.Dto.NewAddressDto;
 import com.example.SchoolManagementSystem.School.Dto.NewSchoolDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,7 +15,6 @@ import java.util.UUID;
 
 @Service
 public class SchoolService {
-
     @Autowired
     SchoolRepository schoolRepository;
 
@@ -21,24 +22,22 @@ public class SchoolService {
     AddressService addressService;
 
     public School createSchool(NewSchoolDto newSchoolDto) {
-        Optional<School> schoolOptional = schoolRepository.findSchoolByEmail(newSchoolDto.getEmail());
-        if (schoolOptional.isPresent()) throw new IllegalStateException("School already exists");
+        List<NewAddressDto> addresses = newSchoolDto.getAddress();
+        List<Address> savedAddress = new ArrayList<>();
+
+        addresses.forEach(address -> {
+            Address newAddress = addressService.createAddress(address);
+            savedAddress.add(newAddress);
+        });
 
         School school = School.builder()
                 .email(newSchoolDto.getEmail())
-                .locked(false).enabled(false)
-                .name(newSchoolDto.getName()).build();
+                .locked(false)
+                .name(newSchoolDto.getName())
+                .address(savedAddress)
+                .build();
 
-        School newSchool = schoolRepository.save(school);
-
-        Address address = Address.builder()
-                .street(newSchoolDto.getStreet()).lga(newSchoolDto.getLga())
-                .state(newSchoolDto.getState()).contactPersonName(newSchoolDto.getContactPersonName())
-                .contactPersonEmail(newSchoolDto.getContactPersonEmail())
-                .school(newSchool).build();
-
-        addressService.createAddress(address);
-        return newSchool;
+        return schoolRepository.save(school);
     }
 
     public List<School> getAllSchools() {
@@ -52,8 +51,11 @@ public class SchoolService {
     }
 
     public School findSchoolByEmail(String email) {
-        return schoolRepository.findSchoolByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("School Not Found"));
+        return schoolRepository.findSchoolByEmail(email);
+    }
+
+    public School findSchoolByName(String name) {
+        return schoolRepository.findSchoolByName(name);
     }
 
     public School findSchoolById(UUID id) {
@@ -67,7 +69,6 @@ public class SchoolService {
 
         schoolOptional.setName(school.getName());
         schoolOptional.setLocked(school.getLocked());
-        schoolOptional.setEnabled(school.getEnabled());
         schoolOptional.setAddress(school.getAddress());
 
         return schoolRepository.save(schoolOptional);

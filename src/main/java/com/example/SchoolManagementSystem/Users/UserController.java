@@ -19,6 +19,7 @@ public class UserController {
     public ResponseEntity<Object> getUsers() {
         try {
             List<User> allUsers = userService.getAllUsers();
+
             return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, allUsers);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
@@ -29,6 +30,7 @@ public class UserController {
     public ResponseEntity<Object> GetOneUser(@PathVariable UUID id) {
         try {
             User userGotten = userService.GetUser(id);
+
             return ResponseHandler.generateResponse("Successfully retrieved data!", HttpStatus.OK, userGotten);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
@@ -39,6 +41,7 @@ public class UserController {
     public ResponseEntity<Object> UpdateUser(@PathVariable UUID id, @RequestBody User user) {
         try {
             User updatedUser = userService.UpdateUser(user, id);
+            
             return ResponseHandler.generateResponse("User updated successfully", HttpStatus.OK, updatedUser);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());

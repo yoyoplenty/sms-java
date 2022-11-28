@@ -5,7 +5,6 @@ import com.example.SchoolManagementSystem.Enum.EnumEmailContent;
 import com.example.SchoolManagementSystem.Role.RoleService;
 import com.example.SchoolManagementSystem.Role.Roles;
 import com.example.SchoolManagementSystem.Student.Student;
-import com.example.SchoolManagementSystem.Student.StudentRepository;
 import com.example.SchoolManagementSystem.Student.StudentService;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import com.example.SchoolManagementSystem.Utils.Email.EmailService;
@@ -24,28 +23,17 @@ import java.util.*;
 public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     StudentService studentService;
-
-    @Autowired
-    StudentRepository studentRepository;
-
     @Autowired
     RoleService roleService;
     @Autowired
     EmailService emailService;
-
-
-    private final static String USER_NOT_FOUND = "user with the email %s not found";
+    
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     public User createUser(NewUserDto newUserDto) throws UnirestException {
-        if (newUserDto.getEmail() != null) {
-            Optional<User> userOptional = userRepository.findUserByEmail(newUserDto.getEmail());
-            if (userOptional.isPresent()) throw new IllegalStateException("User already exists");
-        }
 
         User user = User.builder()
                 .firstName(newUserDto.getFirstName())
@@ -72,7 +60,7 @@ public class UserService implements UserDetailsService {
         user.setRoles(roles);
         User newUser = userRepository.save(user);
 
-        emailService.sendEmailToUser(newUser, EnumEmailContent.RegistrantEmail);
+        emailService.sendEmailToUser(newUser, EnumEmailContent.RegistrationMail);
         return newUser;
     }
 
@@ -84,6 +72,14 @@ public class UserService implements UserDetailsService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) return userOptional.get();
         throw new IllegalStateException("user not found");
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User getUserById(UUID id) {
+        return userRepository.findUserById(id);
     }
 
     public User findUserByConfirmToken(String token) {
@@ -133,7 +129,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String data) throws UsernameNotFoundException {
         try {
             User user = userRepository.findByEmail(data);
-            Student student = studentRepository.findByStudentId(data);
+            Student student = studentService.findStudentByStudentId(data);
 
             return user == null ? UserDetailsImpl.buildStudent(student) : UserDetailsImpl.build(user);
         } catch (Exception e) {
@@ -142,10 +138,3 @@ public class UserService implements UserDetailsService {
     }
 
 }
-
-//    @Override
-//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        User user = userRepository.findUserByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with provided email: " + email));
-//        return UserDetailsImpl.build(user);
-//    }

@@ -17,15 +17,28 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
-        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    private Map<String, List<String>> getErrorsMap(List<String> errors) {
-        Map<String, List<String>> errorResponse = new HashMap<>();
+//    @ExceptionHandler(InvalidFormatException.class)
+//    public ResponseEntity<Map<String, Object>> invalidFormatException(InvalidFormatException ex) {
+//        List<String> listedErrors = new ArrayList<String>();
+//        listedErrors.add(ex.getMessage());
+//
+//        return new ResponseEntity<>(getErrorsMap(listedErrors), new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);
+//    }
+
+    private Map<String, Object> getErrorsMap(List<String> errors) {
+        Map<String, Object> errorResponse = new HashMap<>();
+
+        errorResponse.put("message", "an error occurred");
+        errorResponse.put("status", 422);
         errorResponse.put("errors", errors);
+
         return errorResponse;
     }
 

@@ -16,12 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class TeacherService {
-
     @Autowired
     TeacherRepository teacherRepository;
 
@@ -37,9 +35,7 @@ public class TeacherService {
     private static final Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
     public Teacher createTeacher(NewTeacherDto newTeacherDto) throws UnirestException {
-        if (newTeacherDto.getEmail() == null) throw new IllegalArgumentException("email cannot be empty");
-        //TODO Validate the subjects coming from the request body
-
+        //TODO Validate the subjects coming from the request body using annotation
         School school = schoolService.findSchoolById(newTeacherDto.getSchoolId());
 
         Teacher newTeacher = Teacher.builder()
@@ -71,10 +67,15 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Teacher getTeacher(UUID id) {
-        Optional<Teacher> teacherOptional = teacherRepository.findById(id);
-        if (teacherOptional.isPresent()) return teacherOptional.get();
-        throw new IllegalStateException("teacher not found");
+//    public Teacher getTeacher(UUID id) {
+//        Optional<Teacher> teacherOptional = teacherRepository.findById(id);
+//        if (teacherOptional.isPresent()) return teacherOptional.get();
+//        throw new IllegalStateException("teacher not found");
+//    }
+
+    public Teacher findTeacherById(UUID id) {
+        return teacherRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Teacher not found on :: " + id));
     }
 
     public Object updateTeacher(UpdateTeacherDto updateTeacherDto, UUID id) {
@@ -90,7 +91,7 @@ public class TeacherService {
                 Subject subject = subjectService.findSubjectById(subjectId);
 
                 Teacher subjectPresent = teacherRepository.findSubjectInTeacher(subjectId, teacherOptional.getId());
-                if (subjectPresent != null) throw new IllegalStateException("Subject already assigned teacher");
+                if (subjectPresent != null) throw new IllegalStateException("Subject already assigned to teacher");
 
                 teacherSubjects.add(subject);
             }

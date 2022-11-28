@@ -24,6 +24,7 @@ public class AuthController {
     public ResponseEntity<Object> SignUp(@Valid @RequestBody NewUserDto user) {
         try {
             User newUser = authService.signUp(user);
+
             return ResponseHandler.generateResponse("Successfully created user, please check your mail!", HttpStatus.OK, newUser);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Object> SignIn(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<Object> SignIn(@RequestBody @Valid LoginDto loginDto) {
         try {
             Object data = authService.signIn(loginDto);
 

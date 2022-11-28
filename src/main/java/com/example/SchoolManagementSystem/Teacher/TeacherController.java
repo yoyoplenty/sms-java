@@ -41,6 +41,17 @@ public class TeacherController {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getOneTeacher(@PathVariable UUID id) {
+        try {
+            Object teacher = teacherService.findTeacherById(id);
+
+            return ResponseHandler.generateResponse("Successfully updated teacher", HttpStatus.OK, teacher);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateTeacher(@RequestBody UpdateTeacherDto updateTeacherDto, @PathVariable UUID id) {

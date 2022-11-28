@@ -37,7 +37,7 @@ public class User {
     private String phoneNumber;
 
     @Column(name = "user_type")
-    private EnumUserType userType = EnumUserType.User;
+    private EnumUserType userType = EnumUserType.USER;
 
     @Column(name = "password")
     private String password;

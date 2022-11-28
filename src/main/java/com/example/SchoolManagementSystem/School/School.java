@@ -31,13 +31,10 @@ public class School {
     @Email(message = "please provide a valid email address")
     private String email;
 
-    @OneToMany(mappedBy = "school", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Address> address;
 
     @Column(name = "locked", nullable = false)
     private Boolean locked = false;
-
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled = false;
 }

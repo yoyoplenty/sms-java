@@ -1,33 +1,25 @@
 package com.example.SchoolManagementSystem.School.Dto;
 
+import com.example.SchoolManagementSystem.Address.Dto.NewAddressDto;
+import com.example.SchoolManagementSystem.School.Annotation.SchoolEmailPresent;
+import com.example.SchoolManagementSystem.School.Annotation.SchoolNamePresent;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 public class NewSchoolDto {
+    @SchoolNamePresent
     @NotEmpty(message = "school name must not be empty")
     private String name;
 
+    @SchoolEmailPresent
     @NotEmpty(message = "school email must not be empty")
     private String email;
 
-    @NotEmpty(message = "school street address must not be empty")
-    private String street;
-
-    @NotEmpty(message = "school local government area address must not be empty")
-    private String lga;
-
-    @NotEmpty(message = "school state must not be empty")
-    private String State;
-
-    @NotEmpty(message = "school contact person name must not be empty")
-    private String contactPersonName;
-
-    @NotEmpty(message = "school contact person email must not be empty")
-    private String contactPersonEmail;
+    @NotEmpty(message = "school address must not be empty and must be an array")
+    private List<NewAddressDto> address;
 
     private Boolean locked = false;
-
-    private Boolean enabled = false;
 }

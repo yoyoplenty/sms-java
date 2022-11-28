@@ -25,7 +25,6 @@ import java.util.UUID;
 
 @Controller
 public class AuthService {
-
     @Autowired
     UserService userService;
 
@@ -107,7 +106,7 @@ public class AuthService {
         if (user.getEnabled())
             throw new IllegalStateException("user already active");
 
-        emailService.sendEmailToUser(user, EnumEmailContent.RegistrantEmail);
+        emailService.sendEmailToUser(user, EnumEmailContent.RegistrationMail);
         return user;
     }
 }

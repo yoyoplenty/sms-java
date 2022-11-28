@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "student")
+@Table(name = "student", uniqueConstraints = {@UniqueConstraint(columnNames = {"student_id"})})
 public class Student {
     @Id
     @GeneratedValue
@@ -35,14 +35,14 @@ public class Student {
     private String studentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id")
+    @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "user_type")
-    private EnumUserType userType = EnumUserType.Student;
+    private EnumUserType userType = EnumUserType.STUDENT;
 
     @Column(name = "password")
     private String password;
@@ -58,10 +58,4 @@ public class Student {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Roles roles;
-
-//    private String password;
-//
-//    @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "user_id")
-//    private User user;
 }

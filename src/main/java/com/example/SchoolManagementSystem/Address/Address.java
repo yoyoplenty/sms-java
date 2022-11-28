@@ -35,8 +35,9 @@ public class Address {
 
     @Column(name = "contact_person_email")
     private String contactPersonEmail;
-    @ManyToOne
-    @JsonBackReference
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "school_id")
+    @JsonBackReference
     private School school;
 }

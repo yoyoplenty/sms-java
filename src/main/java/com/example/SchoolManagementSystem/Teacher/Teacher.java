@@ -20,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "teacher")
+@Table(name = "teacher", uniqueConstraints = {@UniqueConstraint(columnNames = {"staff_id"})})
 public class Teacher {
     @Id
     @GeneratedValue
@@ -34,7 +34,8 @@ public class Teacher {
     @JoinColumn(name = "school_id")
     private School school;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToOne(cascade = {CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
