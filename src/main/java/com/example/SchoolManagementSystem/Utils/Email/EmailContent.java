@@ -19,7 +19,8 @@ public class EmailContent {
         String token = tokenService.generateToken(user.getConfirmToken());
 
         StringBuilder emailBody = new StringBuilder();
-        emailBody.append("Welcome to HAIM School Management System. ").append(user.getFirstName()).append(" ").append(user.getLastName());
+        emailBody.append("Welcome to HAIM School Management System. ").append(user.getEmail());
+//        emailBody.append("Welcome to HAIM School Management System. ").append(userDetails.getFirstName()).append(" ").append(userDetails.getLastName());
         emailBody.append(" You are welcome, please click on the link below to activate your account ");
         emailBody.append(" localhost:5050/auth/confirm_email/").append(token);
 
@@ -34,7 +35,6 @@ public class EmailContent {
         String token = tokenService.generateToken(user.getResetToken());
 
         StringBuilder emailBody = new StringBuilder();
-        emailBody.append("Dear. ").append(user.getFirstName()).append(" ").append(user.getLastName());
         emailBody.append(" You are welcome, please click on the link below to activate your account ");
         emailBody.append("localhost:5050/auth/reset_password/").append(token);
 

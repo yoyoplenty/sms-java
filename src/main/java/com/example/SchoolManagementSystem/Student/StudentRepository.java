@@ -16,4 +16,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     Optional<Student> findStudentByFirstNameAndLastNameAndMiddleName
             (String firstName, String lastName, String middleName);
+
+    Student findByFirstNameAndLastNameAndMiddleName
+            (String firstName, String lastName, String middleName);
 }

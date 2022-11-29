@@ -4,8 +4,6 @@ import com.example.SchoolManagementSystem.Auth.Security.Service.UserDetailsImpl;
 import com.example.SchoolManagementSystem.Enum.EnumEmailContent;
 import com.example.SchoolManagementSystem.Role.RoleService;
 import com.example.SchoolManagementSystem.Role.Roles;
-import com.example.SchoolManagementSystem.Student.Student;
-import com.example.SchoolManagementSystem.Student.StudentService;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import com.example.SchoolManagementSystem.Utils.Email.EmailService;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -24,26 +22,23 @@ public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    StudentService studentService;
-    @Autowired
     RoleService roleService;
     @Autowired
     EmailService emailService;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     public User createUser(NewUserDto newUserDto) throws UnirestException {
+        Boolean enabled = newUserDto.getEmail() == null;
 
         User user = User.builder()
-                .firstName(newUserDto.getFirstName())
-                .lastName(newUserDto.getLastName())
                 .email(newUserDto.getEmail())
-                .phoneNumber(newUserDto.getPhoneNumber())
+                .studentId(newUserDto.getStudentId())
                 .password(newUserDto.getPassword())
                 .userType(newUserDto.getUserType())
-                .enabled(false)
                 .locked(false)
+                .enabled(enabled)
                 .build();
 
         String confirmToken = UUID.randomUUID().toString();
@@ -59,8 +54,8 @@ public class UserService implements UserDetailsService {
 
         user.setRoles(roles);
         User newUser = userRepository.save(user);
+        if (!enabled) emailService.sendEmailToUser(newUser, EnumEmailContent.RegistrationMail);
 
-        emailService.sendEmailToUser(newUser, EnumEmailContent.RegistrationMail);
         return newUser;
     }
 
@@ -102,10 +97,10 @@ public class UserService implements UserDetailsService {
         User userOptional = userRepository.findById(id).
                 orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
 
-        userOptional.setFirstName(user.getFirstName());
-        userOptional.setLastName(user.getLastName());
-        userOptional.setPhoneNumber(user.getPhoneNumber());
-        userOptional.setResetToken(user.getResetToken());
+//        userOptional.setFirstName(user.getFirstName());
+//        userOptional.setLastName(user.getLastName());
+//        userOptional.setPhoneNumber(user.getPhoneNumber());
+//        userOptional.setResetToken(user.getResetToken());
 
         return userRepository.save(userOptional);
     }
@@ -129,9 +124,9 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String data) throws UsernameNotFoundException {
         try {
             User user = userRepository.findByEmail(data);
-            Student student = studentService.findStudentByStudentId(data);
+            User studentUser = userRepository.findByStudentId(data);
 
-            return user == null ? UserDetailsImpl.buildStudent(student) : UserDetailsImpl.build(user);
+            return user == null ? UserDetailsImpl.build(studentUser) : UserDetailsImpl.build(user);
         } catch (Exception e) {
             throw new IllegalStateException("invalid login credentials");
         }

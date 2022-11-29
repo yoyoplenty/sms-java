@@ -1,23 +1,18 @@
 package com.example.SchoolManagementSystem.Student.Dto;
 
-import com.example.SchoolManagementSystem.Utils.Dto.UserDto;
+import com.example.SchoolManagementSystem.Student.Annotation.StudentPresent;
+import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.UUID;
 
 
+@StudentPresent(message = "student already present")
 @Data
-public class NewStudentDto extends UserDto {
+public class NewStudentDto extends NewUserDto {
     private String studentId;
 
     @NotNull(message = "school id cannot be empty")
     private UUID schoolId;
-
-    @Size(min = 11, max = 11, message = "phone number should have 11 characters")
-    private String phoneNumber;
-
-    @NotNull(message = "role cannot be empty")
-    private UUID roleId;
 }

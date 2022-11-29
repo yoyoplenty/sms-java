@@ -7,8 +7,6 @@ import java.util.UUID;
 
 @Data
 public class NewAdminDto extends NewUserDto {
-    private String middleName;
-
     private String staffId;
 
     private UUID schoolId;

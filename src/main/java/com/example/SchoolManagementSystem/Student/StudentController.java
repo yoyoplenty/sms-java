@@ -25,10 +25,9 @@ public class StudentController {
     public ResponseEntity<Object> createStudent(@RequestBody @Valid NewStudentDto newStudentDto) {
         try {
             newStudentDto.setPassword(encoder.encode(newStudentDto.getPassword()));
-
             Student newStudent = studentService.createStudent(newStudentDto);
 
-            return ResponseHandler.generateResponse("Successfully created teacher", HttpStatus.OK, newStudent);
+            return ResponseHandler.generateResponse("Successfully created student", HttpStatus.OK, newStudent);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
@@ -45,7 +44,6 @@ public class StudentController {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getStudent(@PathVariable String id) {

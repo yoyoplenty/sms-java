@@ -1,6 +1,7 @@
 package com.example.SchoolManagementSystem.Teacher;
 
 
+import com.example.SchoolManagementSystem.Address.Address;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Subject.Subject;
 import com.example.SchoolManagementSystem.Users.User;
@@ -28,6 +29,22 @@ public class Teacher {
 
     @Column(name = "staff_id")
     private String staffId;
+
+    @Column(name = "firstname")
+    private String firstName;
+
+    @Column(name = "lastname")
+    private String lastName;
+
+    @Column(name = "middlename")
+    private String middleName;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

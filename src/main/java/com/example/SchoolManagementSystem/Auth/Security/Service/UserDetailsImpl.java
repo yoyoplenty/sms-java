@@ -1,6 +1,6 @@
 package com.example.SchoolManagementSystem.Auth.Security.Service;
 
-import com.example.SchoolManagementSystem.Role.Roles;
+import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import com.example.SchoolManagementSystem.Student.Student;
 import com.example.SchoolManagementSystem.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +10,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -21,51 +20,31 @@ public class UserDetailsImpl implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
     private User user;
-
     private Student student;
     private UUID id;
     private String email;
     private String username;
     private String studentId;
+
+    private EnumUserType userType;
     private Boolean enabled;
+    private Boolean locked;
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(UUID id, String studentId, String password, Boolean enabled,
-                           Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.studentId = studentId;
-        this.password = password;
-        this.enabled = enabled;
-        this.authorities = authorities;
-    }
 
-    public static UserDetailsImpl buildStudent(Student student) {
-        List<Roles> roles = new ArrayList<>();
-        roles.add(student.getRoles());
-
-        List<GrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
-
-        return new UserDetailsImpl(
-                student.getId(),
-                student.getStudentId(),
-                student.getPassword(),
-                student.getEnabled(),
-                authorities);
-    }
-
-    public UserDetailsImpl(UUID id, String email, String username, String password, Boolean enabled,
-                           Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(UUID id, String email, String studentId, EnumUserType userType, String username, String password,
+                           Boolean enabled, Boolean locked, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
+        this.studentId = studentId;
+        this.userType = userType;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+        this.locked = locked;
         this.authorities = authorities;
     }
 
@@ -77,9 +56,12 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(
                 user.getId(),
                 user.getEmail(),
+                user.getStudentId(),
+                user.getUserType(),
                 user.getUsername(),
                 user.getPassword(),
                 user.getEnabled(),
+                user.getLocked(),
                 authorities);
     }
 
@@ -96,7 +78,6 @@ public class UserDetailsImpl implements UserDetails {
     public String getEmail() {
         return email;
     }
-
 
     @Override
     public String getUsername() {

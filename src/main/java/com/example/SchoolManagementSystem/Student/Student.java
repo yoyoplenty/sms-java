@@ -1,8 +1,8 @@
 package com.example.SchoolManagementSystem.Student;
 
-import com.example.SchoolManagementSystem.Enum.EnumUserType;
-import com.example.SchoolManagementSystem.Role.Roles;
+import com.example.SchoolManagementSystem.Address.Address;
 import com.example.SchoolManagementSystem.School.School;
+import com.example.SchoolManagementSystem.Users.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,21 +41,13 @@ public class Student {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "user_type")
-    private EnumUserType userType = EnumUserType.STUDENT;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "locked")
-    private Boolean locked;
-
-    @Column(name = "enabled")
-    private Boolean enabled;
-
-    private String username;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private Roles roles;
+    @OneToOne(cascade = {CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+    
 }

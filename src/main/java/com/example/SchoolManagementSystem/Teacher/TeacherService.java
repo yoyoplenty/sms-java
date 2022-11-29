@@ -1,5 +1,6 @@
 package com.example.SchoolManagementSystem.Teacher;
 
+import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.School.SchoolService;
 import com.example.SchoolManagementSystem.Subject.Subject;
@@ -12,6 +13,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ public class TeacherService {
     UserService userService;
 
     @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
     SchoolService schoolService;
 
     @Autowired
@@ -37,8 +42,13 @@ public class TeacherService {
     public Teacher createTeacher(NewTeacherDto newTeacherDto) throws UnirestException {
         //TODO Validate the subjects coming from the request body using annotation
         School school = schoolService.findSchoolById(newTeacherDto.getSchoolId());
+        newTeacherDto.setUserType(EnumUserType.TEACHER);
 
         Teacher newTeacher = Teacher.builder()
+                .firstName(newTeacherDto.getFirstName())
+                .lastName(newTeacherDto.getLastName())
+                .middleName(newTeacherDto.getMiddleName())
+                .phoneNumber(newTeacherDto.getPhoneNumber())
                 .staffId(UUID.randomUUID().toString().substring(0, 5))
                 .school(school)
                 .build();
@@ -57,6 +67,7 @@ public class TeacherService {
 
         newTeacher.setSubjects(subjects);
 
+        newTeacherDto.setPassword(encoder.encode(newTeacherDto.getPassword()));
         User user = userService.createUser(newTeacherDto);
         newTeacher.setUser(user);
 
@@ -66,13 +77,7 @@ public class TeacherService {
     public List<Teacher> getAllTeachers() {
         return teacherRepository.findAll();
     }
-
-//    public Teacher getTeacher(UUID id) {
-//        Optional<Teacher> teacherOptional = teacherRepository.findById(id);
-//        if (teacherOptional.isPresent()) return teacherOptional.get();
-//        throw new IllegalStateException("teacher not found");
-//    }
-
+    
     public Teacher findTeacherById(UUID id) {
         return teacherRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Teacher not found on :: " + id));

@@ -1,6 +1,7 @@
 package com.example.SchoolManagementSystem.Admin;
 
 import com.example.SchoolManagementSystem.Admin.Dto.NewAdminDto;
+import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.School.SchoolService;
 import com.example.SchoolManagementSystem.Teacher.TeacherService;
@@ -10,6 +11,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,18 +26,27 @@ public class AdminService {
     UserService userService;
 
     @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
     SchoolService schoolService;
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
     public Admin createAdmin(NewAdminDto newAdminDto) throws UnirestException {
         School school = schoolService.findSchoolById(newAdminDto.getSchoolId());
-        //TODO encrypt password before saving the user data from the admin.
+        newAdminDto.setUserType(EnumUserType.SCHOOL_ADMIN);
+
         Admin newAdmin = Admin.builder()
+                .firstName(newAdminDto.getFirstName())
+                .lastName(newAdminDto.getLastName())
+                .middleName(newAdminDto.getMiddleName())
+                .phoneNumber(newAdminDto.getPhoneNumber())
                 .staffId(UUID.randomUUID().toString().substring(0, 5))
                 .school(school)
                 .build();
 
+        newAdminDto.setPassword(encoder.encode(newAdminDto.getPassword()));
         User user = userService.createUser(newAdminDto);
         newAdmin.setUser(user);
 

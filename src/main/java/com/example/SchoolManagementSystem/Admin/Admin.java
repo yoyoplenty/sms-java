@@ -1,5 +1,6 @@
 package com.example.SchoolManagementSystem.Admin;
 
+import com.example.SchoolManagementSystem.Address.Address;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Users.User;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,22 @@ public class Admin {
 
     @Column(name = "staff_id")
     private String staffId;
+
+    @Column(name = "firstname")
+    private String firstName;
+
+    @Column(name = "lastname")
+    private String lastName;
+
+    @Column(name = "middlename")
+    private String middleName;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")

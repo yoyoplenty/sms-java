@@ -54,8 +54,8 @@ public class AuthService {
 
         UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
 
-        if (!user.getEnabled())
-            throw new IllegalStateException("user is inactive, please check your mail and confirm email address");
+        if (!user.getEnabled() || user.getLocked())
+            throw new IllegalStateException("user is inactive or deactivated");
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -87,7 +87,8 @@ public class AuthService {
         String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
 
-        emailService.sendEmailToUser(user, EnumEmailContent.ForgetPasswordMail);
+        //Find the type of user from the
+//        emailService.sendEmailToUser(user, EnumEmailContent.ForgetPasswordMail);
         return userService.UpdateUser(user, user.getId());
     }
 

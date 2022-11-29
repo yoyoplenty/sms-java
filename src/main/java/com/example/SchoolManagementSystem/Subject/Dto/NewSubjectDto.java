@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Data
 public class NewSubjectDto extends SubjectDetailsDto {
-    @Size(min = 3, max = 3, message = "name should have 3 characters")
+    @Size(min = 4, max = 4, message = "subject code should have 4 characters")
     @NotBlank(message = "subject code cannot be empty")
     private String code;
 }

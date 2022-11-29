@@ -24,20 +24,14 @@ public class User {
     @GeneratedValue
     private UUID id = UUID.randomUUID();
 
-    @Column(name = "firstname")
-    private String firstName;
-
-    @Column(name = "lastname")
-    private String lastName;
-
     @Column(name = "email")
     private String email;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Column(name = "student_id")
+    private String studentId;
 
     @Column(name = "user_type")
-    private EnumUserType userType = EnumUserType.USER;
+    private EnumUserType userType;
 
     @Column(name = "password")
     private String password;
