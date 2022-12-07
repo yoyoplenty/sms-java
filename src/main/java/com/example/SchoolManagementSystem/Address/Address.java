@@ -1,7 +1,5 @@
 package com.example.SchoolManagementSystem.Address;
 
-import com.example.SchoolManagementSystem.School.School;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,9 +33,4 @@ public class Address {
 
     @Column(name = "contact_person_email")
     private String contactPersonEmail;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "school_id")
-    @JsonBackReference
-    private School school;
 }

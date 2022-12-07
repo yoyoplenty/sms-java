@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class UpdateTeacherDto {
+public class UpdateTeacherDto extends NewTeacherDto {
     private String middleName;
 
     private String staffId;

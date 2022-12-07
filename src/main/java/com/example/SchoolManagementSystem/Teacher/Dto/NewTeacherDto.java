@@ -17,8 +17,6 @@ public class NewTeacherDto extends NewUserDto {
 
     private String staffId;
 
-    private UUID schoolId;
-    
     @NotEmpty(message = "subject id's must not be empty")
     private List<UUID> subjectId;
 }

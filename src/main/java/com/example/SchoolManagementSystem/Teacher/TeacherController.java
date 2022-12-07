@@ -1,6 +1,7 @@
 package com.example.SchoolManagementSystem.Teacher;
 
 
+import com.example.SchoolManagementSystem.School.Annotation.SchoolNotPresent;
 import com.example.SchoolManagementSystem.Teacher.Dto.NewTeacherDto;
 import com.example.SchoolManagementSystem.Teacher.Dto.UpdateTeacherDto;
 import com.example.SchoolManagementSystem.Utils.Handlers.Responses.ResponseHandler;
@@ -34,20 +35,31 @@ public class TeacherController {
     @GetMapping()
     public ResponseEntity<Object> getTeachers() {
         try {
-            List<Teacher> teachers = teacherService.getAllTeachers();
+            List<Teacher> teachers = teacherService.getTeachers();
 
             return ResponseHandler.generateResponse("Successfully fetched teacher", HttpStatus.OK, teachers);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getOneTeacher(@PathVariable UUID id) {
+    public ResponseEntity<Object> getTeacher(@PathVariable UUID id) {
         try {
             Object teacher = teacherService.findTeacherById(id);
 
-            return ResponseHandler.generateResponse("Successfully updated teacher", HttpStatus.OK, teacher);
+            return ResponseHandler.generateResponse("Successfully fetched teacher", HttpStatus.OK, teacher);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @GetMapping("/schools/{school_id}")
+    public ResponseEntity<Object> getSchoolTeachers(@PathVariable @SchoolNotPresent UUID school_id) {
+        try {
+            List<Teacher> teachers = teacherService.getTeachersBySchoolId(school_id);
+
+            return ResponseHandler.generateResponse("Successfully fetched school teachers", HttpStatus.OK, teachers);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }

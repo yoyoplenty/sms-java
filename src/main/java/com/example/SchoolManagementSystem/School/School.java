@@ -1,7 +1,6 @@
 package com.example.SchoolManagementSystem.School;
 
 import com.example.SchoolManagementSystem.Address.Address;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,10 +30,13 @@ public class School {
     @Email(message = "please provide a valid email address")
     private String email;
 
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "school_id")
     private List<Address> address;
 
     @Column(name = "locked", nullable = false)
     private Boolean locked = false;
+
+    //TODO all school events
+    //TODO all school payments
 }

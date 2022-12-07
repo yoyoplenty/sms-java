@@ -29,9 +29,9 @@ public class UserDto extends LoginDto {
     private String phoneNumber;
 
     @UserTypeEnum(message = "invalid user type", anyOf = {EnumUserType.USER, EnumUserType.STUDENT,
-            EnumUserType.ADMIN, EnumUserType.TEACHER, EnumUserType.SCHOOL_ADMIN})
+            EnumUserType.SYSTEM_ADMIN, EnumUserType.TEACHER, EnumUserType.SCHOOL_ADMIN})
     private EnumUserType userType;
-
+    
     @NotEmpty(message = "role cannot be empty")
     @NotNull
     private List<UUID> roleId;

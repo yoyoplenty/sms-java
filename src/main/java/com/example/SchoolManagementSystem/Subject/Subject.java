@@ -1,8 +1,9 @@
 package com.example.SchoolManagementSystem.Subject;
 
 import com.example.SchoolManagementSystem.Enum.EnumGrade;
+import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Teacher.Teacher;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,8 +33,12 @@ public class Subject {
     @Column(name = "grade")
     private EnumGrade grade;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id")
+    private School school;
+
+    @JsonIgnore
     @ManyToMany(mappedBy = "subjects", cascade =
             {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JsonBackReference
     private List<Teacher> teachers;
 }

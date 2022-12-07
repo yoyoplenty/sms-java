@@ -1,5 +1,7 @@
 package com.example.SchoolManagementSystem.Teacher;
 
+import com.example.SchoolManagementSystem.Address.Address;
+import com.example.SchoolManagementSystem.Address.AddressService;
 import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.School.SchoolService;
@@ -37,24 +39,81 @@ public class TeacherService {
     @Autowired
     SubjectService subjectService;
 
+    @Autowired
+    AddressService addressService;
+
     private static final Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
     public Teacher createTeacher(NewTeacherDto newTeacherDto) throws UnirestException {
-        //TODO Validate the subjects coming from the request body using annotation
         School school = schoolService.findSchoolById(newTeacherDto.getSchoolId());
+
         newTeacherDto.setUserType(EnumUserType.TEACHER);
+        Address address = addressService.createAddress(newTeacherDto.getAddress());
 
         Teacher newTeacher = Teacher.builder()
                 .firstName(newTeacherDto.getFirstName())
                 .lastName(newTeacherDto.getLastName())
                 .middleName(newTeacherDto.getMiddleName())
                 .phoneNumber(newTeacherDto.getPhoneNumber())
-                .staffId(UUID.randomUUID().toString().substring(0, 5))
+                .staffId(UUID.randomUUID().toString().substring(0, 6))
                 .school(school)
+                .address(address)
                 .build();
 
+        newTeacherDto.setPassword(encoder.encode(newTeacherDto.getPassword()));
+        User user = userService.createUser(newTeacherDto);
+
+        newTeacher.setSubjects(addSubjectToTeacher(newTeacherDto, newTeacher));
+        newTeacher.setUser(user);
+
+        return teacherRepository.save(newTeacher);
+    }
+
+    public List<Teacher> getTeachers() {
+        return teacherRepository.findAll();
+    }
+
+    public List<Teacher> getTeachersBySchoolId(UUID schoolId) {
+        schoolService.findSchoolById(schoolId);
+
+        return teacherRepository.findTeacherBySchoolId(schoolId);
+    }
+
+    public Teacher findTeacherById(UUID id) {
+        return teacherRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Teacher not found on :: " + id));
+    }
+
+    public Teacher updateTeacher(UpdateTeacherDto updateTeacherDto, UUID id) {
+        Teacher teacherOptional = findTeacherById(id);
+
+        if (updateTeacherDto.getSubjectId() != null || updateTeacherDto.getSubjectId().size() > 0)
+            teacherOptional.setSubjects(addSubjectToTeacher(updateTeacherDto, teacherOptional));
+
+        Address address = updateTeacherDto.getAddress() != null ?
+                addressService.updateAddress(updateTeacherDto.getAddress(), teacherOptional.getAddress().getId())
+                : teacherOptional.getAddress();
+
+        teacherOptional.setFirstName(updateTeacherDto.getFirstName());
+        teacherOptional.setLastName(updateTeacherDto.getLastName());
+        teacherOptional.setMiddleName(updateTeacherDto.getMiddleName());
+        teacherOptional.setPhoneNumber(updateTeacherDto.getPhoneNumber());
+        teacherOptional.setAddress(address);
+
+        return teacherRepository.save(teacherOptional);
+    }
+
+    public String deleteTeacher(UUID id) {
+        Teacher teacherOptional = findTeacherById(id);
+        teacherRepository.delete(teacherOptional);
+
+        logger.info("User deleted successfully");
+        return "deleted successfully";
+    }
+
+    public List<Subject> addSubjectToTeacher(NewTeacherDto newTeacherDto, Teacher newTeacher) {
         List<UUID> subjectIds = newTeacherDto.getSubjectId();
-        List<Subject> subjects = new ArrayList<>();
+        List<Subject> subjects = newTeacher.getSubjects() != null ? newTeacher.getSubjects() : new ArrayList<>();
 
         subjectIds.forEach(subjectId -> {
             Subject subject = subjectService.findSubjectById(subjectId);
@@ -65,53 +124,6 @@ public class TeacherService {
             subjects.add(subject);
         });
 
-        newTeacher.setSubjects(subjects);
-
-        newTeacherDto.setPassword(encoder.encode(newTeacherDto.getPassword()));
-        User user = userService.createUser(newTeacherDto);
-        newTeacher.setUser(user);
-
-        return teacherRepository.save(newTeacher);
-    }
-
-    public List<Teacher> getAllTeachers() {
-        return teacherRepository.findAll();
-    }
-    
-    public Teacher findTeacherById(UUID id) {
-        return teacherRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Teacher not found on :: " + id));
-    }
-
-    public Object updateTeacher(UpdateTeacherDto updateTeacherDto, UUID id) {
-        Teacher teacherOptional = teacherRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("teacher not found on :: " + id));
-
-        List<Subject> teacherSubjects = teacherOptional.getSubjects();
-
-        if (updateTeacherDto.getSubjectId() != null || updateTeacherDto.getSubjectId().size() > 0) {
-            List<UUID> subjectIds = updateTeacherDto.getSubjectId();
-
-            for (UUID subjectId : subjectIds) {
-                Subject subject = subjectService.findSubjectById(subjectId);
-
-                Teacher subjectPresent = teacherRepository.findSubjectInTeacher(subjectId, teacherOptional.getId());
-                if (subjectPresent != null) throw new IllegalStateException("Subject already assigned to teacher");
-
-                teacherSubjects.add(subject);
-            }
-        }
-        teacherOptional.setSubjects(teacherSubjects);
-
-        return teacherRepository.save(teacherOptional);
-    }
-
-    public String deleteTeacher(UUID id) {
-        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new IllegalStateException("Teacher not found on :: " + id));
-        teacherRepository.delete(teacher);
-
-        logger.info("User deleted successfully");
-
-        return "deleted successfully";
+        return subjects;
     }
 }

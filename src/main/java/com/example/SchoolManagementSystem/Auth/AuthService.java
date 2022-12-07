@@ -63,7 +63,7 @@ public class AuthService {
         Map<String, Object> data = new HashMap<>();
         data.put("accessToken", jwt);
         data.put("user", authentication.getPrincipal());
-        data.put("authorities", authentication.getAuthorities());
+//        data.put("authorities", authentication.getAuthorities());
 
         return data;
     }
@@ -87,8 +87,7 @@ public class AuthService {
         String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
 
-        //Find the type of user from the
-//        emailService.sendEmailToUser(user, EnumEmailContent.ForgetPasswordMail);
+        emailService.sendEmailToUser(user, EnumEmailContent.ForgetPasswordMail);
         return userService.UpdateUser(user, user.getId());
     }
 

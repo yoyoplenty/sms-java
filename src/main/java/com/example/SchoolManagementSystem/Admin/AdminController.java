@@ -1,6 +1,8 @@
 package com.example.SchoolManagementSystem.Admin;
 
 import com.example.SchoolManagementSystem.Admin.Dto.NewAdminDto;
+import com.example.SchoolManagementSystem.Admin.Dto.UpdateAdminDto;
+import com.example.SchoolManagementSystem.School.Annotation.SchoolNotPresent;
 import com.example.SchoolManagementSystem.Utils.Handlers.Responses.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +47,39 @@ public class AdminController {
             Object admin = adminService.findAdminById(id);
 
             return ResponseHandler.generateResponse("Successfully updated teacher", HttpStatus.OK, admin);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @GetMapping("/schools/{school_id}")
+    public ResponseEntity<Object> getSchoolAdmins(@PathVariable @SchoolNotPresent UUID school_id) {
+        try {
+            List<Admin> admins = adminService.getAdminsBySchoolId(school_id);
+
+            return ResponseHandler.generateResponse("Successfully fetched school admins", HttpStatus.OK, admins);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updateAdmin(@RequestBody UpdateAdminDto updateAdminDto, @PathVariable UUID id) {
+        try {
+            Object admin = adminService.updateAdmin(updateAdminDto, id);
+
+            return ResponseHandler.generateResponse("Successfully updated admin", HttpStatus.OK, admin);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteTeacher(@PathVariable UUID id) {
+        try {
+            Object admin = adminService.deleteAdmin(id);
+
+            return ResponseHandler.generateResponse("Successfully deleted teacher", HttpStatus.OK, admin);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }

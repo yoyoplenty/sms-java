@@ -4,12 +4,12 @@ import com.example.SchoolManagementSystem.Address.Address;
 import com.example.SchoolManagementSystem.Address.AddressService;
 import com.example.SchoolManagementSystem.Address.Dto.NewAddressDto;
 import com.example.SchoolManagementSystem.School.Dto.NewSchoolDto;
+import com.example.SchoolManagementSystem.School.Dto.UpdateSchoolDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -45,9 +45,7 @@ public class SchoolService {
     }
 
     public School getSchool(UUID id) {
-        Optional<School> schoolOptional = schoolRepository.findById(id);
-        if (schoolOptional.isPresent()) return schoolOptional.get();
-        throw new IllegalStateException("user not found");
+        return findSchoolById(id);
     }
 
     public School findSchoolByEmail(String email) {
@@ -59,24 +57,44 @@ public class SchoolService {
     }
 
     public School findSchoolById(UUID id) {
-        return schoolRepository.findSchoolById(id)
+        return schoolRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("School Not Found"));
     }
 
-    public School updateSchool(School school, UUID id) {
-        School schoolOptional = schoolRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("school not found on :: " + id));
+    public School findSchoolByAddressId(UUID addressId) {
+        return schoolRepository.findSchoolByAddressId(addressId)
+                .orElseThrow(() -> new IllegalStateException("School Not Found"));
+    }
 
-        schoolOptional.setName(school.getName());
-        schoolOptional.setLocked(school.getLocked());
-        schoolOptional.setAddress(school.getAddress());
+    public School getSchoolById(UUID id) {
+        return schoolRepository.findSchoolById(id);
+    }
 
-        return schoolRepository.save(schoolOptional);
+    public School updateSchool(UpdateSchoolDto updateSchoolDto, UUID id) {
+        School school = findSchoolById(id);
+        List<Address> savedAddress = school.getAddress();
+
+        if (updateSchoolDto.getAddress() != null) {
+            Address newAddress = addressService.createAddress(updateSchoolDto.getAddress());
+            savedAddress.add(newAddress);
+        }
+
+        school.setName(school.getName());
+        school.setLocked(school.getLocked());
+        school.setAddress(savedAddress);
+
+        return schoolRepository.save(school);
+    }
+
+    public School deleteAddressInSchool(UUID addressId) {
+        School school = findSchoolByAddressId(addressId);
+
+        addressService.deleteAddress(addressId);
+        return school;
     }
 
     public String deleteSchool(UUID id) {
-        School school = schoolRepository.findById(id).
-                orElseThrow(() -> new IllegalStateException("school not found on :: " + id));
+        School school = findSchoolById(id);
 
         schoolRepository.delete(school);
         return "deleted successfully";

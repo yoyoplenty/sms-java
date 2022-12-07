@@ -19,7 +19,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class User {
-
     @Id
     @GeneratedValue
     private UUID id = UUID.randomUUID();

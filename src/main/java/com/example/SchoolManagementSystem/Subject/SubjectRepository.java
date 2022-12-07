@@ -4,6 +4,7 @@ import com.example.SchoolManagementSystem.Enum.EnumGrade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,4 +19,6 @@ public interface SubjectRepository extends JpaRepository<Subject, UUID> {
     Optional<Subject> findSubjectByNameAndCode(String name, String code);
 
     Optional<Subject> findSubjectByNameAndGrade(String name, EnumGrade grade);
+
+    List<Subject> findSubjectBySchoolId(UUID schoolId);
 }

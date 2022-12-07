@@ -2,6 +2,7 @@ package com.example.SchoolManagementSystem.Users;
 
 import com.example.SchoolManagementSystem.Auth.Security.Service.UserDetailsImpl;
 import com.example.SchoolManagementSystem.Enum.EnumEmailContent;
+import com.example.SchoolManagementSystem.Enum.EnumUserType;
 import com.example.SchoolManagementSystem.Role.RoleService;
 import com.example.SchoolManagementSystem.Role.Roles;
 import com.example.SchoolManagementSystem.Users.Dto.NewUserDto;
@@ -15,7 +16,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -31,18 +35,17 @@ public class UserService implements UserDetailsService {
 
     public User createUser(NewUserDto newUserDto) throws UnirestException {
         Boolean enabled = newUserDto.getEmail() == null;
+        if (newUserDto.getUserType() == null) newUserDto.setUserType(EnumUserType.SYSTEM_ADMIN);
 
         User user = User.builder()
                 .email(newUserDto.getEmail())
                 .studentId(newUserDto.getStudentId())
                 .password(newUserDto.getPassword())
                 .userType(newUserDto.getUserType())
-                .locked(false)
-                .enabled(enabled)
+                .locked(false).enabled(enabled)
                 .build();
 
-        String confirmToken = UUID.randomUUID().toString();
-        user.setConfirmToken(confirmToken);
+        user.setConfirmToken(UUID.randomUUID().toString());
 
         List<UUID> roleIds = newUserDto.getRoleId();
         Set<Roles> roles = new HashSet<>();
@@ -64,9 +67,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User GetUser(UUID id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) return userOptional.get();
-        throw new IllegalStateException("user not found");
+        return findUserById(id);
     }
 
     public User getUserByEmail(String email) {
@@ -77,14 +78,19 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserById(id);
     }
 
-    public User findUserByConfirmToken(String token) {
-        return userRepository.findUserByConfirmToken(token)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with token: " + token));
+    public User findUserById(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
     public User findUserByEmail(String email) {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+    }
+
+    public User findUserByConfirmToken(String token) {
+        return userRepository.findUserByConfirmToken(token)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with token: " + token));
     }
 
     public User findUserByResetToken(String resetToken) {
@@ -94,15 +100,16 @@ public class UserService implements UserDetailsService {
     }
 
     public User UpdateUser(User user, UUID id) {
-        User userOptional = userRepository.findById(id).
-                orElseThrow(() -> new IllegalStateException("User not found on :: " + id));
+        User userDetails = findUserById(id);
 
-//        userOptional.setFirstName(user.getFirstName());
-//        userOptional.setLastName(user.getLastName());
-//        userOptional.setPhoneNumber(user.getPhoneNumber());
-//        userOptional.setResetToken(user.getResetToken());
+        //TODO must be encrypted before it gets here
+//        user.setPassword();
+        userDetails.setResetToken(user.getResetToken());
+        userDetails.setEnabled(user.getEnabled());
+        userDetails.setLocked(user.getLocked());
+        userDetails.setRoles(user.getRoles());
 
-        return userRepository.save(userOptional);
+        return userRepository.save(userDetails);
     }
 
     public User updateStatus(UUID id, Boolean status) {

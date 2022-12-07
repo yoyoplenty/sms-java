@@ -1,6 +1,7 @@
 package com.example.SchoolManagementSystem.Student;
 
 import com.example.SchoolManagementSystem.Address.Address;
+import com.example.SchoolManagementSystem.Class.Class;
 import com.example.SchoolManagementSystem.School.School;
 import com.example.SchoolManagementSystem.Users.User;
 import lombok.AllArgsConstructor;
@@ -45,9 +46,13 @@ public class Student {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_id")
+    private Class clazz;
+
     @OneToOne(cascade = {CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
-    
+
 }

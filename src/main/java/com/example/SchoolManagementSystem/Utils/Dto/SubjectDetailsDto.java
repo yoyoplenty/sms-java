@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 @Data
 public class SubjectDetailsDto {
@@ -18,4 +19,7 @@ public class SubjectDetailsDto {
     @NotNull(message = "grade should not be null")
     @GradeEnum(anyOf = {EnumGrade.JUNIOR, EnumGrade.SENIOR})
     private EnumGrade grade;
+
+    @NotNull(message = "school cannot be empty")
+    private UUID schoolId;
 }
