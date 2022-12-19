@@ -12,8 +12,8 @@ import java.util.UUID;
 @Data
 public class NewStudentDto extends NewUserDto {
     private String studentId;
-    
-    @NotNull(message = "school id cannot be empty")
+
+    @NotNull(message = "class id cannot be empty")
     private UUID classId;
 
 }

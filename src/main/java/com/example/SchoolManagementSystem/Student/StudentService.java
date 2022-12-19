@@ -45,8 +45,6 @@ public class StudentService {
     public Student createStudent(NewStudentDto newStudentDto) throws UnirestException {
         School school = schoolService.findSchoolById(newStudentDto.getSchoolId());
         Class clazz = classService.findClassById(newStudentDto.getClassId());
-
-        newStudentDto.setUserType(EnumUserType.STUDENT);
         Address address = addressService.createAddress(newStudentDto.getAddress());
 
         Student newStudent = Student.builder()
@@ -60,10 +58,12 @@ public class StudentService {
                 .clazz(clazz)
                 .build();
 
+        newStudentDto.setUserType(EnumUserType.STUDENT);
         newStudentDto.setStudentId(newStudent.getStudentId());
-        User user = userService.createUser(newStudentDto);
 
+        User user = userService.createUser(newStudentDto);
         newStudent.setUser(user);
+
         return studentRepository.save(newStudent);
     }
 
@@ -95,8 +95,8 @@ public class StudentService {
         Student student = findStudentById(id);
 
         Address address = updateStudentDto.getAddress() != null ?
-                addressService.updateAddress(updateStudentDto.getAddress(), student.getAddress().getId())
-                : student.getAddress();
+                addressService.updateAddress(updateStudentDto.getAddress(), student.getAddress().getId()) :
+                student.getAddress();
 
         student.setClazz(clazz);
         student.setFirstName(updateStudentDto.getFirstName());

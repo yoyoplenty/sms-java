@@ -42,7 +42,7 @@ public class StudentController {
         try {
             List<Student> students = studentService.getAllStudents();
 
-            return ResponseHandler.generateResponse("Successfully created teacher", HttpStatus.OK, students);
+            return ResponseHandler.generateResponse("Successfully fetched data", HttpStatus.OK, students);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
         }

@@ -50,6 +50,9 @@ public class Student {
     @JoinColumn(name = "class_id")
     private Class clazz;
 
+    @JoinColumn(name = "is_cleared")
+    private Boolean isCleared;
+
     @OneToOne(cascade = {CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

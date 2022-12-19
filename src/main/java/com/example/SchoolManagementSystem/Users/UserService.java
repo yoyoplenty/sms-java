@@ -102,8 +102,7 @@ public class UserService implements UserDetailsService {
     public User UpdateUser(User user, UUID id) {
         User userDetails = findUserById(id);
 
-        //TODO must be encrypted before it gets here
-//        user.setPassword();
+        userDetails.setPassword(user.getPassword());
         userDetails.setResetToken(user.getResetToken());
         userDetails.setEnabled(user.getEnabled());
         userDetails.setLocked(user.getLocked());
