@@ -8,6 +8,8 @@ import java.util.UUID;
 
 @Data
 public class NewUserDto extends UserDto {
+    private String name;
+
     private UUID schoolId;
 
     private NewAddressDto address;

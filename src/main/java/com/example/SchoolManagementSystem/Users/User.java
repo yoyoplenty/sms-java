@@ -23,6 +23,9 @@ public class User {
     @GeneratedValue
     private UUID id = UUID.randomUUID();
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "email")
     private String email;
 

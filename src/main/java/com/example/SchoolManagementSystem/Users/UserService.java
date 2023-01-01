@@ -38,6 +38,7 @@ public class UserService implements UserDetailsService {
         if (newUserDto.getUserType() == null) newUserDto.setUserType(EnumUserType.SYSTEM_ADMIN);
 
         User user = User.builder()
+                .name(newUserDto.getFirstName() + " " + newUserDto.getLastName())
                 .email(newUserDto.getEmail())
                 .studentId(newUserDto.getStudentId())
                 .password(newUserDto.getPassword())
@@ -47,15 +48,9 @@ public class UserService implements UserDetailsService {
 
         user.setConfirmToken(UUID.randomUUID().toString());
 
-        List<UUID> roleIds = newUserDto.getRoleId();
-        Set<Roles> roles = new HashSet<>();
-
-        roleIds.forEach(roleId -> {
-            Roles userRole = roleService.findRoleByTd(roleId);
-            roles.add(userRole);
-        });
-
+        Set<Roles> roles = addRoleToUser(newUserDto.getRoleId());
         user.setRoles(roles);
+
         User newUser = userRepository.save(user);
         if (!enabled) emailService.sendEmailToUser(newUser, EnumEmailContent.RegistrationMail);
 
@@ -124,6 +119,17 @@ public class UserService implements UserDetailsService {
 
         userRepository.delete(user);
         return "deleted successfully";
+    }
+
+    public Set<Roles> addRoleToUser(List<UUID> roleUuids) {
+        Set<Roles> roles = new HashSet<>();
+
+        roleUuids.forEach(roleId -> {
+            Roles userRole = roleService.findRoleByTd(roleId);
+            roles.add(userRole);
+        });
+
+        return roles;
     }
 
     @Override
